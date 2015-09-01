@@ -62,8 +62,8 @@ Directory to start from.
 
 ## Related
 
-- [find-up-cli](https://github.com/sindresorhus/find-up) - CLI for this module
-- [package-root](https://github.com/sindresorhus/package-root) - Find the root of a npm package
+- [find-up-cli](https://github.com/sindresorhus/find-up-cli) - CLI for this module
+- [pkg-dir](https://github.com/sindresorhus/pkg-dir) - Find the root directory of a npm package
 
 
 ## License

@@ -1,20 +1,20 @@
-'use strict';
-var path = require('path');
-var test = require('ava');
-var fn = require('./');
-var pkgPath = path.join(__dirname, 'package.json');
+import test from 'ava';
+import path from 'path';
+import fn from './';
 
-test('async', function (t) {
-	return fn('package.json', {
-		cwd: path.join(__dirname, 'fixture', 'foo', 'bar')
-	}).then(function (fp) {
-		t.is(fp, pkgPath);
+const pkgPath = path.resolve('.', 'package.json');
+
+test('async', async t => {
+	const filePath = await fn('package.json', {
+		cwd: path.join('.', 'fixture', 'foo', 'bar')
 	});
+
+	t.is(filePath, pkgPath);
 });
 
-test('sync', function (t) {
-	var fp = fn.sync('package.json', {
-		cwd: path.join(__dirname, 'fixture', 'foo', 'bar')
+test('sync', t => {
+	const fp = fn.sync('package.json', {
+		cwd: path.join('.', 'fixture', 'foo', 'bar')
 	});
 
 	t.is(fp, pkgPath);

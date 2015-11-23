@@ -25,9 +25,9 @@ $ npm install --save find-up
 
 ```js
 // example.js
-var findUp = require('find-up');
+const findUp = require('find-up');
 
-findUp('unicorn.png').then(function (filepath) {
+findUp('unicorn.png').then(filepath => {
 	console.log(filepath);
 	//=> '/Users/sindresorhus/unicorn.png'
 });
@@ -38,7 +38,7 @@ findUp('unicorn.png').then(function (filepath) {
 
 ### findUp(filename, [options])
 
-Returns a promise that resolves to a filepath or `null`.
+Returns a promise for the filepath or `null`.
 
 ### findUp.sync(filename, [options])
 

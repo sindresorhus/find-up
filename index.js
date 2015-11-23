@@ -23,10 +23,10 @@ module.exports = function (filename, opts) {
 			pathExists(fp).then(function (exists) {
 				if (exists) {
 					resolve(fp);
-				} else if (!parts.pop()) {
-					resolve(null);
-				} else {
+				} else if (parts.pop()) {
 					find();
+				} else {
+					resolve(null);
 				}
 			});
 		})();

@@ -18,5 +18,4 @@ test('sync', t => {
 	});
 
 	t.is(fp, pkgPath);
-	t.end();
 });

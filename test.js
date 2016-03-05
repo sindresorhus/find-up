@@ -1,7 +1,7 @@
 import test from 'ava';
 import fs from 'fs';
 import path from 'path';
-import tempdir from 'tempdir';
+import tempfile from 'tempfile';
 import fn from './';
 
 const pkgPath = path.resolve('.', 'package.json');
@@ -10,7 +10,9 @@ const fixture = path.join('.', 'fixture', 'foo', 'bar');
 
 // Create a disjoint directory, used for the not-found tests.
 test.beforeEach(async t => {
-	t.context.disjoint = await tempdir();
+	const tmpDir = tempfile();
+	fs.mkdirSync(tmpDir);
+	t.context.disjoint = tmpDir;
 });
 
 test.afterEach(t => {

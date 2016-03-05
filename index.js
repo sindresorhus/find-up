@@ -8,8 +8,7 @@ function splitPath(x) {
 }
 
 function join(parts, filename) {
-	var base = parts.join(path.sep);
-	return base ? (base + path.sep + filename) : filename;
+	return path.resolve(parts.join(path.sep) + path.sep, filename);
 }
 
 module.exports = function (filename, opts) {

@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "ava": "*",
+    "tempdir": "^1.0.0",
     "xo": "*"
   }
 }

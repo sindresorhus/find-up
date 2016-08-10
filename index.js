@@ -3,30 +3,22 @@ var path = require('path');
 var pathExists = require('path-exists');
 var Promise = require('pinkie-promise');
 
-function splitPath(x) {
-	return path.resolve(x || '').split(path.sep);
-}
-
-function join(parts, filename) {
-	return path.resolve(parts.join(path.sep) + path.sep, filename);
-}
-
 module.exports = function (filename, opts) {
 	opts = opts || {};
 
-	var parts = splitPath(opts.cwd);
+	var dir = path.resolve(opts.cwd || '');
 
 	return new Promise(function (resolve) {
 		(function find() {
-			var fp = join(parts, filename);
-
+			var fp = path.join(dir, filename);
 			pathExists(fp).then(function (exists) {
 				if (exists) {
 					resolve(fp);
-				} else if (parts.pop()) {
-					find();
-				} else {
+				} else if (dir === path.sep) {
 					resolve(null);
+				} else {
+					dir = path.dirname(dir);
+					find();
 				}
 			});
 		})();
@@ -36,18 +28,18 @@ module.exports = function (filename, opts) {
 module.exports.sync = function (filename, opts) {
 	opts = opts || {};
 
-	var parts = splitPath(opts.cwd);
-	var len = parts.length;
+	var dir = path.resolve(opts.cwd || '');
 
-	while (len--) {
-		var fp = join(parts, filename);
+	// eslint-disable-next-line no-constant-condition
+	while (true) {
+		var fp = path.join(dir, filename);
 
 		if (pathExists.sync(fp)) {
 			return fp;
+		} else if (dir === path.sep) {
+			return null;
 		}
 
-		parts.pop();
+		dir = path.dirname(dir);
 	}
-
-	return null;
 };

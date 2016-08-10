@@ -1,6 +1,6 @@
-import test from 'ava';
 import fs from 'fs';
 import path from 'path';
+import test from 'ava';
 import tempfile from 'tempfile';
 import fn from './';
 

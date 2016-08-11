@@ -3,16 +3,11 @@ var path = require('path');
 var pathExists = require('path-exists');
 var Promise = require('pinkie-promise');
 
-function rootDir(dir) {
-	var sepIndex = dir.indexOf(path.sep);
-	return sepIndex >= 0 ? dir.substring(0, sepIndex + 1) : dir;
-}
-
 module.exports = function (filename, opts) {
 	opts = opts || {};
 
 	var dir = path.resolve(opts.cwd || '');
-	var root = rootDir(dir);
+	var root = path.parse(dir).root;
 
 	return new Promise(function (resolve) {
 		(function find() {
@@ -35,7 +30,7 @@ module.exports.sync = function (filename, opts) {
 	opts = opts || {};
 
 	var dir = path.resolve(opts.cwd || '');
-	var root = rootDir(dir);
+	var root = path.parse(dir).root;
 
 	// eslint-disable-next-line no-constant-condition
 	while (true) {

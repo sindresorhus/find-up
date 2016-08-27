@@ -38,7 +38,7 @@ findUp('unicorn.png').then(filepath => {
 
 ### findUp(filename, [options])
 
-Returns a promise for the filepath or `null`.
+Returns a `Promise` for the filepath or `null`.
 
 ### findUp.sync(filename, [options])
 
@@ -69,4 +69,4 @@ Directory to start from.
 
 ## License
 
-MIT © [Sindre Sorhus](http://sindresorhus.com)
+MIT © [Sindre Sorhus](https://sindresorhus.com)

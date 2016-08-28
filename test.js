@@ -1,12 +1,30 @@
 import fs from 'fs';
-import path from 'path';
+import {join} from 'path';
 import test from 'ava';
 import tempfile from 'tempfile';
 import fn from './';
 
-const pkgPath = path.resolve('.', 'package.json');
-const bazPath = path.resolve('.', 'fixture', 'baz.js');
-const fixture = path.join('.', 'fixture', 'foo', 'bar');
+const name = {
+	pkgDir: 'find-up',
+	pkg: 'package.json',
+	fixtureDir: 'fixture',
+	baz: 'baz.js'
+};
+
+// These paths are relative to the project root.
+const rel = {
+	fixtureDir: name.fixtureDir
+};
+rel.baz = join(rel.fixtureDir, name.baz);
+rel.barDir = join(rel.fixtureDir, 'foo', 'bar');
+
+const abs = {
+	pkgDir: __dirname
+};
+abs.pkg = join(abs.pkgDir, name.pkg);
+abs.fixtureDir = join(abs.pkgDir, name.fixtureDir);
+abs.baz = join(abs.fixtureDir, name.baz);
+abs.barDir = join(abs.fixtureDir, 'foo', 'bar');
 
 // Create a disjoint directory, used for the not-found tests.
 test.beforeEach(async t => {
@@ -19,48 +37,160 @@ test.afterEach(t => {
 	fs.rmdirSync(t.context.disjoint);
 });
 
-test('async (dir)', async t => {
-	const filePath = await fn('package.json', {
-		cwd: fixture
+test('async (child file)', async t => {
+	const filePath = await fn(name.pkg);
+
+	t.is(filePath, abs.pkg);
+});
+
+test('sync (child file)', t => {
+	const filePath = fn.sync(name.pkg);
+
+	t.is(filePath, abs.pkg);
+});
+
+test('async (child dir)', async t => {
+	const filePath = await fn(name.fixtureDir);
+
+	t.is(filePath, abs.fixtureDir);
+});
+
+test('sync (child dir)', t => {
+	const filePath = fn.sync(name.fixtureDir);
+
+	t.is(filePath, abs.fixtureDir);
+});
+
+test('async (child file, custom cwd)', async t => {
+	const filePath = await fn(name.baz, {
+		cwd: rel.fixtureDir
 	});
 
-	t.is(filePath, pkgPath);
+	t.is(filePath, abs.baz);
 });
 
-test('sync (dir)', t => {
-	const fp = fn.sync('package.json', {
-		cwd: fixture
+test('sync (child file, custom cwd)', t => {
+	const filePath = fn.sync(name.baz, {
+		cwd: rel.fixtureDir
 	});
 
-	t.is(fp, pkgPath);
+	t.is(filePath, abs.baz);
 });
 
-test('async (file)', async t => {
-	const filePath = await fn(bazPath);
+test('async (cwd)', async t => {
+	const filePath = await fn(name.pkgDir, {
+		cwd: abs.pkgDir
+	});
 
-	t.is(filePath, bazPath);
+	t.is(filePath, abs.pkgDir);
 });
 
-test('sync (file)', t => {
-	const filePath = fn.sync(bazPath);
+test('sync (cwd)', t => {
+	const filePath = fn.sync(name.pkgDir, {
+		cwd: abs.pkgDir
+	});
 
-	t.is(filePath, bazPath);
+	t.is(filePath, abs.pkgDir);
+});
+
+test('async (cousin file, custom cwd)', async t => {
+	const filePath = await fn(name.baz, {
+		cwd: rel.barDir
+	});
+
+	t.is(filePath, abs.baz);
+});
+
+test('sync (cousin file, custom cwd)', t => {
+	const filePath = fn.sync(name.baz, {
+		cwd: rel.barDir
+	});
+
+	t.is(filePath, abs.baz);
+});
+
+test('async (nested descendant file)', async t => {
+	const filePath = await fn(rel.baz);
+
+	t.is(filePath, abs.baz);
+});
+
+test('sync (nested descendant file)', t => {
+	const filePath = fn.sync(rel.baz);
+
+	t.is(filePath, abs.baz);
+});
+
+test('async (nested descendant dir)', async t => {
+	const filePath = await fn(rel.barDir);
+
+	t.is(filePath, abs.barDir);
+});
+
+test('sync (nested descendant dir)', t => {
+	const filePath = fn.sync(rel.barDir);
+
+	t.is(filePath, abs.barDir);
+});
+
+test('async (nested cousin dir, custom cwd)', async t => {
+	const filePath = await fn(rel.barDir, {
+		cwd: rel.fixtureDir
+	});
+
+	t.is(filePath, abs.barDir);
+});
+
+test('sync (nested cousin dir, custom cwd)', t => {
+	const filePath = fn.sync(rel.barDir, {
+		cwd: rel.fixtureDir
+	});
+
+	t.is(filePath, abs.barDir);
+});
+
+test('async (ancestor dir, custom cwd)', async t => {
+	const filePath = await fn(name.fixtureDir, {
+		cwd: rel.barDir
+	});
+
+	t.is(filePath, abs.fixtureDir);
+});
+
+test('sync (ancestor dir, custom cwd)', t => {
+	const filePath = fn.sync(name.fixtureDir, {
+		cwd: rel.barDir
+	});
+
+	t.is(filePath, abs.fixtureDir);
+});
+
+test('async (not found)', async t => {
+	const filePath = await fn('somenonexistentfile.js');
+
+	t.is(filePath, null);
+});
+
+test('sync (not found)', t => {
+	const filePath = fn.sync('somenonexistentfile.js');
+
+	t.is(filePath, null);
 });
 
 // Both tests start in a disjoint directory. `package.json` should not be found
 // and `null` should be returned.
-test('async (not found)', async t => {
-	const fp = await fn('package.json', {
+test('async (not found, custom cwd)', async t => {
+	const filePath = await fn(name.pkg, {
 		cwd: t.context.disjoint
 	});
 
-	t.is(fp, null);
+	t.is(filePath, null);
 });
 
-test('sync (not found)', t => {
-	const fp = fn.sync('package.json', {
+test('sync (not found, custom cwd)', t => {
+	const filePath = fn.sync(name.pkg, {
 		cwd: t.context.disjoint
 	});
 
-	t.is(fp, null);
+	t.is(filePath, null);
 });

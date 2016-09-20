@@ -5,11 +5,11 @@ const pathExists = require('path-exists');
 module.exports = (filename, opts) => {
 	opts = opts || {};
 
-	let dir = path.resolve(opts.cwd || '');
-	const root = path.parse(dir).root;
+	const startDir = path.resolve(opts.cwd || '');
+	const root = path.parse(startDir).root;
 
 	return new Promise(resolve => {
-		(function find() {
+		(function find(dir) {
 			const fp = path.join(dir, filename);
 
 			pathExists(fp).then(exists => {
@@ -18,11 +18,10 @@ module.exports = (filename, opts) => {
 				} else if (dir === root) {
 					resolve(null);
 				} else {
-					dir = path.dirname(dir);
-					find();
+					find(path.dirname(dir));
 				}
 			});
-		})();
+		})(startDir);
 	});
 };
 

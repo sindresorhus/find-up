@@ -1,5 +1,5 @@
 import fs from 'fs';
-import {join} from 'path';
+import path from 'path';
 import test from 'ava';
 import tempfile from 'tempfile';
 import fn from './';
@@ -11,22 +11,22 @@ const name = {
 	baz: 'baz.js'
 };
 
-// These paths are relative to the project root.
+// These paths are relative to the project root
 const rel = {
 	fixtureDir: name.fixtureDir
 };
-rel.baz = join(rel.fixtureDir, name.baz);
-rel.barDir = join(rel.fixtureDir, 'foo', 'bar');
+rel.baz = path.join(rel.fixtureDir, name.baz);
+rel.barDir = path.join(rel.fixtureDir, 'foo', 'bar');
 
 const abs = {
 	pkgDir: __dirname
 };
-abs.pkg = join(abs.pkgDir, name.pkg);
-abs.fixtureDir = join(abs.pkgDir, name.fixtureDir);
-abs.baz = join(abs.fixtureDir, name.baz);
-abs.barDir = join(abs.fixtureDir, 'foo', 'bar');
+abs.pkg = path.join(abs.pkgDir, name.pkg);
+abs.fixtureDir = path.join(abs.pkgDir, name.fixtureDir);
+abs.baz = path.join(abs.fixtureDir, name.baz);
+abs.barDir = path.join(abs.fixtureDir, 'foo', 'bar');
 
-// Create a disjoint directory, used for the not-found tests.
+// Create a disjoint directory, used for the not-found tests
 test.beforeEach(async t => {
 	const tmpDir = tempfile();
 	fs.mkdirSync(tmpDir);

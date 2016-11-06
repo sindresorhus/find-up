@@ -27,7 +27,7 @@ abs.baz = path.join(abs.fixtureDir, name.baz);
 abs.barDir = path.join(abs.fixtureDir, 'foo', 'bar');
 
 // Create a disjoint directory, used for the not-found tests
-test.beforeEach(async t => {
+test.beforeEach(t => {
 	const tmpDir = tempfile();
 	fs.mkdirSync(tmpDir);
 	t.context.disjoint = tmpDir;

@@ -8,7 +8,8 @@ const name = {
 	pkgDir: 'find-up',
 	pkg: 'package.json',
 	fixtureDir: 'fixture',
-	baz: 'baz.js'
+	baz: 'baz.js',
+	qux: 'qux.js'
 };
 
 // These paths are relative to the project root
@@ -16,6 +17,7 @@ const rel = {
 	fixtureDir: name.fixtureDir
 };
 rel.baz = path.join(rel.fixtureDir, name.baz);
+rel.qux = path.join(rel.fixtureDir, name.qux);
 rel.barDir = path.join(rel.fixtureDir, 'foo', 'bar');
 
 const abs = {
@@ -24,6 +26,7 @@ const abs = {
 abs.pkg = path.join(abs.pkgDir, name.pkg);
 abs.fixtureDir = path.join(abs.pkgDir, name.fixtureDir);
 abs.baz = path.join(abs.fixtureDir, name.baz);
+abs.qux = path.join(abs.fixtureDir, name.qux);
 abs.barDir = path.join(abs.fixtureDir, 'foo', 'bar');
 
 // Create a disjoint directory, used for the not-found tests
@@ -71,6 +74,54 @@ test('async (child file, custom cwd)', async t => {
 
 test('sync (child file, custom cwd)', t => {
 	const filePath = fn.sync(name.baz, {
+		cwd: rel.fixtureDir
+	});
+
+	t.is(filePath, abs.baz);
+});
+
+test('async (child file, array, custom cwd)', async t => {
+	const filePath = await fn([name.baz], {
+		cwd: rel.fixtureDir
+	});
+
+	t.is(filePath, abs.baz);
+});
+
+test('sync (child file, array, custom cwd)', t => {
+	const filePath = fn.sync([name.baz], {
+		cwd: rel.fixtureDir
+	});
+
+	t.is(filePath, abs.baz);
+});
+
+test('async (first child file, array, custom cwd)', async t => {
+	const filePath = await fn([name.qux, name.baz], {
+		cwd: rel.fixtureDir
+	});
+
+	t.is(filePath, abs.qux);
+});
+
+test('sync (first child file, array, custom cwd)', t => {
+	const filePath = fn.sync([name.qux, name.baz], {
+		cwd: rel.fixtureDir
+	});
+
+	t.is(filePath, abs.qux);
+});
+
+test('async (second child file, array, custom cwd)', async t => {
+	const filePath = await fn(['fake', name.baz], {
+		cwd: rel.fixtureDir
+	});
+
+	t.is(filePath, abs.baz);
+});
+
+test('sync (second child file, array, custom cwd)', t => {
+	const filePath = fn.sync(['fake', name.baz], {
 		cwd: rel.fixtureDir
 	});
 

@@ -2,8 +2,6 @@
 const path = require('path');
 const locatePath = require('locate-path');
 
-const findPath = (dir, files) => locatePath(files.map(file => path.join(dir, file)), {concurrency: 1});
-
 module.exports = (filename, opts) => {
 	opts = opts || {};
 
@@ -14,9 +12,9 @@ module.exports = (filename, opts) => {
 
 	return new Promise(resolve => {
 		(function find(dir) {
-			findPath(dir, filenames).then(fp => {
-				if (fp) {
-					resolve(fp);
+			locatePath(filenames, {concurrency: 1, cwd: dir}).then(file => {
+				if (file) {
+					resolve(path.join(dir, file));
 				} else if (dir === root) {
 					resolve(null);
 				} else {
@@ -35,14 +33,12 @@ module.exports.sync = (filename, opts) => {
 
 	const filenames = [].concat(filename);
 
-	const findPathSync = (directory, files) => locatePath.sync(files.map(name => path.join(directory, name)));
-
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
-		const fp = findPathSync(dir, filenames);
+		const file = locatePath.sync(filenames, {cwd: dir});
 
-		if (fp) {
-			return fp;
+		if (file) {
+			return path.join(dir, file);
 		} else if (dir === root) {
 			return null;
 		}

@@ -1,12 +1,8 @@
 'use strict';
 const path = require('path');
 const locatePath = require('locate-path');
-const pathExists = require('path-exists');
 
-const findPath = (dir, files) => locatePath(
-	files.map(file => path.join(dir, file)),
-	{concurrency: 1}
-);
+const findPath = (dir, files) => locatePath(files.map(file => path.join(dir, file)), {concurrency: 1});
 
 module.exports = (filename, opts) => {
 	opts = opts || {};
@@ -39,9 +35,7 @@ module.exports.sync = (filename, opts) => {
 
 	const filenames = [].concat(filename);
 
-	const findPathSync = files => files
-		.map(name => path.join(dir, name))
-		.find(filePath => pathExists.sync(filePath));
+	const findPathSync = files => locatePath.sync(files.map(name => path.join(dir, name)));
 
 	// eslint-disable-next-line no-constant-condition
 	while (true) {

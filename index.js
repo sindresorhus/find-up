@@ -35,11 +35,11 @@ module.exports.sync = (filename, opts) => {
 
 	const filenames = [].concat(filename);
 
-	const findPathSync = files => locatePath.sync(files.map(name => path.join(dir, name)));
+	const findPathSync = (directory, files) => locatePath.sync(files.map(name => path.join(directory, name)));
 
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
-		const fp = findPathSync(filenames);
+		const fp = findPathSync(dir, filenames);
 
 		if (fp) {
 			return fp;

@@ -40,6 +40,7 @@
     "path"
   ],
   "dependencies": {
+    "locate-path": "^1.0.0",
     "path-exists": "^2.0.0"
   },
   "devDependencies": {

@@ -1,31 +1,11 @@
 'use strict';
 const path = require('path');
+const locatePath = require('locate-path');
 const pathExists = require('path-exists');
 
-const verifyIfPathFound = paths => new Promise(resolve => {
-	const nextPath = paths.next();
-
-	if (nextPath.done) {
-		return resolve();
-	}
-
-	return resolve(nextPath.value[1].then(exists => {
-		if (exists) {
-			return nextPath.value[0];
-		}
-
-		return verifyIfPathFound(paths);
-	}));
-});
-
-const searchPath = (dir, files) => files.map(file => {
-	const fp = path.join(dir, file);
-
-	return [fp, pathExists(fp)];
-});
-
-const findPath = (dir, files) => verifyIfPathFound(
-	searchPath(dir, files)[Symbol.iterator]()
+const findPath = (dir, files) => locatePath(
+	files.map(file => path.join(dir, file)),
+	{concurrency: 1}
 );
 
 module.exports = (filename, opts) => {

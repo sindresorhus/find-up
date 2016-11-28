@@ -12,7 +12,7 @@ module.exports = (filename, opts) => {
 
 	return new Promise(resolve => {
 		(function find(dir) {
-			locatePath(filenames, {concurrency: 1, cwd: dir}).then(file => {
+			locatePath(filenames, {cwd: dir}).then(file => {
 				if (file) {
 					resolve(path.join(dir, file));
 				} else if (dir === root) {

@@ -1,6 +1,6 @@
 'use strict';
 const path = require('path');
-const pathExists = require('path-exists');
+const locatePath = require('locate-path');
 
 module.exports = (filename, opts) => {
 	opts = opts || {};
@@ -8,13 +8,13 @@ module.exports = (filename, opts) => {
 	const startDir = path.resolve(opts.cwd || '');
 	const root = path.parse(startDir).root;
 
+	const filenames = [].concat(filename);
+
 	return new Promise(resolve => {
 		(function find(dir) {
-			const fp = path.join(dir, filename);
-
-			pathExists(fp).then(exists => {
-				if (exists) {
-					resolve(fp);
+			locatePath(filenames, {cwd: dir}).then(file => {
+				if (file) {
+					resolve(path.join(dir, file));
 				} else if (dir === root) {
 					resolve(null);
 				} else {
@@ -31,12 +31,14 @@ module.exports.sync = (filename, opts) => {
 	let dir = path.resolve(opts.cwd || '');
 	const root = path.parse(dir).root;
 
+	const filenames = [].concat(filename);
+
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
-		const fp = path.join(dir, filename);
+		const file = locatePath.sync(filenames, {cwd: dir});
 
-		if (pathExists.sync(fp)) {
-			return fp;
+		if (file) {
+			return path.join(dir, file);
 		} else if (dir === root) {
 			return null;
 		}

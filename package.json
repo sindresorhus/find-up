@@ -40,7 +40,7 @@
     "path"
   ],
   "dependencies": {
-    "path-exists": "^2.0.0"
+    "locate-path": "^2.0.0"
   },
   "devDependencies": {
     "ava": "*",

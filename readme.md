@@ -15,12 +15,12 @@ $ npm install --save find-up
 ```
 /
 └── Users
-    └── sindresorhus
-        ├── unicorn.png
-        └── foo
-            └── bar
-                ├── baz
-                └── example.js
+		└── sindresorhus
+				├── unicorn.png
+				└── foo
+						└── bar
+								├── baz
+								└── example.js
 ```
 
 ```js
@@ -28,6 +28,11 @@ $ npm install --save find-up
 const findUp = require('find-up');
 
 findUp('unicorn.png').then(filepath => {
+	console.log(filepath);
+	//=> '/Users/sindresorhus/unicorn.png'
+});
+
+findUp(['rainbow.png', 'unicorn.png']).then(filepath => {
 	console.log(filepath);
 	//=> '/Users/sindresorhus/unicorn.png'
 });
@@ -40,9 +45,17 @@ findUp('unicorn.png').then(filepath => {
 
 Returns a `Promise` for the filepath or `null`.
 
+### findUp([filenameA, filenameB], [options])
+
+Returns a `Promise` for the first filepath found (by respecting the order) or `null`.
+
 ### findUp.sync(filename, [options])
 
 Returns a filepath or `null`.
+
+### findUp.sync([filenameA, filenameB], [options])
+
+Returns the first filepath found (by respecting the order) or `null`.
 
 #### filename
 
@@ -54,7 +67,7 @@ Filename of the file to find.
 
 ##### cwd
 
-Type: `string`  
+Type: `string`<br>
 Default: `process.cwd()`
 
 Directory to start from.

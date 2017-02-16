@@ -43,11 +43,11 @@ findUp(['rainbow.png', 'unicorn.png']).then(filepath => {
 
 ### findUp(filename, [options])
 
-Returns a `Promise` for the filepath or `null`.
+Returns a `Promise` for either the filepath or `null` if it could be found.
 
 ### findUp([filenameA, filenameB], [options])
 
-Returns a `Promise` for the first filepath found (by respecting the order) or `null`.
+Returns a `Promise` for either the first filepath found (by respecting the order) or `null` if none could be found.
 
 ### findUp.sync(filename, [options])
 

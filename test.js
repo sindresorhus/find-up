@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import test from 'ava';
-import tempfile from 'tempfile';
-import fn from './';
+import tempy from 'tempy';
+import m from '.';
 
 const name = {
 	pkgDir: 'find-up',
@@ -31,8 +31,7 @@ abs.barDir = path.join(abs.fixtureDir, 'foo', 'bar');
 
 // Create a disjoint directory, used for the not-found tests
 test.beforeEach(t => {
-	const tmpDir = tempfile();
-	fs.mkdirSync(tmpDir);
+	const tmpDir = tempy.directory();
 	t.context.disjoint = tmpDir;
 });
 
@@ -41,31 +40,31 @@ test.afterEach(t => {
 });
 
 test('async (child file)', async t => {
-	const filePath = await fn(name.pkg);
+	const filePath = await m(name.pkg);
 
 	t.is(filePath, abs.pkg);
 });
 
 test('sync (child file)', t => {
-	const filePath = fn.sync(name.pkg);
+	const filePath = m.sync(name.pkg);
 
 	t.is(filePath, abs.pkg);
 });
 
 test('async (child dir)', async t => {
-	const filePath = await fn(name.fixtureDir);
+	const filePath = await m(name.fixtureDir);
 
 	t.is(filePath, abs.fixtureDir);
 });
 
 test('sync (child dir)', t => {
-	const filePath = fn.sync(name.fixtureDir);
+	const filePath = m.sync(name.fixtureDir);
 
 	t.is(filePath, abs.fixtureDir);
 });
 
 test('async (child file, custom cwd)', async t => {
-	const filePath = await fn(name.baz, {
+	const filePath = await m(name.baz, {
 		cwd: rel.fixtureDir
 	});
 
@@ -73,7 +72,7 @@ test('async (child file, custom cwd)', async t => {
 });
 
 test('sync (child file, custom cwd)', t => {
-	const filePath = fn.sync(name.baz, {
+	const filePath = m.sync(name.baz, {
 		cwd: rel.fixtureDir
 	});
 
@@ -81,7 +80,7 @@ test('sync (child file, custom cwd)', t => {
 });
 
 test('async (child file, array, custom cwd)', async t => {
-	const filePath = await fn([name.baz], {
+	const filePath = await m([name.baz], {
 		cwd: rel.fixtureDir
 	});
 
@@ -89,7 +88,7 @@ test('async (child file, array, custom cwd)', async t => {
 });
 
 test('sync (child file, array, custom cwd)', t => {
-	const filePath = fn.sync([name.baz], {
+	const filePath = m.sync([name.baz], {
 		cwd: rel.fixtureDir
 	});
 
@@ -97,7 +96,7 @@ test('sync (child file, array, custom cwd)', t => {
 });
 
 test('async (first child file, array, custom cwd)', async t => {
-	const filePath = await fn([name.qux, name.baz], {
+	const filePath = await m([name.qux, name.baz], {
 		cwd: rel.fixtureDir
 	});
 
@@ -105,7 +104,7 @@ test('async (first child file, array, custom cwd)', async t => {
 });
 
 test('sync (first child file, array, custom cwd)', t => {
-	const filePath = fn.sync([name.qux, name.baz], {
+	const filePath = m.sync([name.qux, name.baz], {
 		cwd: rel.fixtureDir
 	});
 
@@ -113,7 +112,7 @@ test('sync (first child file, array, custom cwd)', t => {
 });
 
 test('async (second child file, array, custom cwd)', async t => {
-	const filePath = await fn(['fake', name.baz], {
+	const filePath = await m(['fake', name.baz], {
 		cwd: rel.fixtureDir
 	});
 
@@ -121,7 +120,7 @@ test('async (second child file, array, custom cwd)', async t => {
 });
 
 test('sync (second child file, array, custom cwd)', t => {
-	const filePath = fn.sync(['fake', name.baz], {
+	const filePath = m.sync(['fake', name.baz], {
 		cwd: rel.fixtureDir
 	});
 
@@ -129,7 +128,7 @@ test('sync (second child file, array, custom cwd)', t => {
 });
 
 test('async (cwd)', async t => {
-	const filePath = await fn(name.pkgDir, {
+	const filePath = await m(name.pkgDir, {
 		cwd: abs.pkgDir
 	});
 
@@ -137,7 +136,7 @@ test('async (cwd)', async t => {
 });
 
 test('sync (cwd)', t => {
-	const filePath = fn.sync(name.pkgDir, {
+	const filePath = m.sync(name.pkgDir, {
 		cwd: abs.pkgDir
 	});
 
@@ -145,7 +144,7 @@ test('sync (cwd)', t => {
 });
 
 test('async (cousin file, custom cwd)', async t => {
-	const filePath = await fn(name.baz, {
+	const filePath = await m(name.baz, {
 		cwd: rel.barDir
 	});
 
@@ -153,7 +152,7 @@ test('async (cousin file, custom cwd)', async t => {
 });
 
 test('sync (cousin file, custom cwd)', t => {
-	const filePath = fn.sync(name.baz, {
+	const filePath = m.sync(name.baz, {
 		cwd: rel.barDir
 	});
 
@@ -161,31 +160,31 @@ test('sync (cousin file, custom cwd)', t => {
 });
 
 test('async (nested descendant file)', async t => {
-	const filePath = await fn(rel.baz);
+	const filePath = await m(rel.baz);
 
 	t.is(filePath, abs.baz);
 });
 
 test('sync (nested descendant file)', t => {
-	const filePath = fn.sync(rel.baz);
+	const filePath = m.sync(rel.baz);
 
 	t.is(filePath, abs.baz);
 });
 
 test('async (nested descendant dir)', async t => {
-	const filePath = await fn(rel.barDir);
+	const filePath = await m(rel.barDir);
 
 	t.is(filePath, abs.barDir);
 });
 
 test('sync (nested descendant dir)', t => {
-	const filePath = fn.sync(rel.barDir);
+	const filePath = m.sync(rel.barDir);
 
 	t.is(filePath, abs.barDir);
 });
 
 test('async (nested cousin dir, custom cwd)', async t => {
-	const filePath = await fn(rel.barDir, {
+	const filePath = await m(rel.barDir, {
 		cwd: rel.fixtureDir
 	});
 
@@ -193,7 +192,7 @@ test('async (nested cousin dir, custom cwd)', async t => {
 });
 
 test('sync (nested cousin dir, custom cwd)', t => {
-	const filePath = fn.sync(rel.barDir, {
+	const filePath = m.sync(rel.barDir, {
 		cwd: rel.fixtureDir
 	});
 
@@ -201,7 +200,7 @@ test('sync (nested cousin dir, custom cwd)', t => {
 });
 
 test('async (ancestor dir, custom cwd)', async t => {
-	const filePath = await fn(name.fixtureDir, {
+	const filePath = await m(name.fixtureDir, {
 		cwd: rel.barDir
 	});
 
@@ -209,7 +208,7 @@ test('async (ancestor dir, custom cwd)', async t => {
 });
 
 test('sync (ancestor dir, custom cwd)', t => {
-	const filePath = fn.sync(name.fixtureDir, {
+	const filePath = m.sync(name.fixtureDir, {
 		cwd: rel.barDir
 	});
 
@@ -217,13 +216,13 @@ test('sync (ancestor dir, custom cwd)', t => {
 });
 
 test('async (not found)', async t => {
-	const filePath = await fn('somenonexistentfile.js');
+	const filePath = await m('somenonexistentfile.js');
 
 	t.is(filePath, null);
 });
 
 test('sync (not found)', t => {
-	const filePath = fn.sync('somenonexistentfile.js');
+	const filePath = m.sync('somenonexistentfile.js');
 
 	t.is(filePath, null);
 });
@@ -231,7 +230,7 @@ test('sync (not found)', t => {
 // Both tests start in a disjoint directory. `package.json` should not be found
 // and `null` should be returned.
 test('async (not found, custom cwd)', async t => {
-	const filePath = await fn(name.pkg, {
+	const filePath = await m(name.pkg, {
 		cwd: t.context.disjoint
 	});
 
@@ -239,7 +238,7 @@ test('async (not found, custom cwd)', async t => {
 });
 
 test('sync (not found, custom cwd)', t => {
-	const filePath = fn.sync(name.pkg, {
+	const filePath = m.sync(name.pkg, {
 		cwd: t.context.disjoint
 	});
 

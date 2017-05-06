@@ -1,7 +1,7 @@
 {
   "name": "find-up",
   "version": "2.1.0",
-  "description": "Find a file by walking up parent directories",
+  "description": "Find a file or directory by walking up parent directories",
   "license": "MIT",
   "repository": "sindresorhus/find-up",
   "author": {

@@ -8,6 +8,7 @@ const name = {
 	pkgDir: 'find-up',
 	pkg: 'package.json',
 	fixtureDir: 'fixture',
+	stopDir: 'bar',
 	baz: 'baz.js',
 	qux: 'qux.js'
 };
@@ -240,6 +241,42 @@ test('async (not found, custom cwd)', async t => {
 test('sync (not found, custom cwd)', t => {
 	const filePath = m.sync(name.pkg, {
 		cwd: t.context.disjoint
+	});
+
+	t.is(filePath, null);
+});
+
+test('async (found, stop dir)', async t => {
+	const filePath = await m(name.baz, {
+		cwd: rel.barDir,
+		stopDir: name.fixtureDir
+	});
+
+	t.is(filePath, abs.baz);
+});
+
+test('async (not found, stop dir)', async t => {
+	const filePath = await m(name.baz, {
+		cwd: rel.barDir,
+		stopDir: name.stopDir
+	});
+
+	t.is(filePath, null);
+});
+
+test('sync (found, stop dir)', t => {
+	const filePath = m.sync(name.baz, {
+		cwd: rel.barDir,
+		stopDir: name.fixtureDir
+	});
+
+	t.is(filePath, abs.baz);
+});
+
+test('sync (not found, stop dir)', t => {
+	const filePath = m.sync(name.baz, {
+		cwd: rel.barDir,
+		stopDir: name.stopDir
 	});
 
 	t.is(filePath, null);

@@ -2,12 +2,26 @@
 const path = require('path');
 const locatePath = require('locate-path');
 
+function isLastDirEqualTo(dir, compareDir) {
+	if (!compareDir) {
+		return false;
+	}
+
+	const splittedPath = dir.split('/');
+	const lastFolder = splittedPath[splittedPath.length - 1];
+
+	if (lastFolder === compareDir) {
+		return true;
+	}
+
+	return false;
+}
+
 module.exports = (filename, opts) => {
 	opts = opts || {};
 
 	const startDir = path.resolve(opts.cwd || '');
 	const root = path.parse(startDir).root;
-
 	const filenames = [].concat(filename);
 
 	return new Promise(resolve => {
@@ -15,6 +29,8 @@ module.exports = (filename, opts) => {
 			locatePath(filenames, {cwd: dir}).then(file => {
 				if (file) {
 					resolve(path.join(dir, file));
+				} else if (isLastDirEqualTo(dir, opts.stopDir)) {
+					resolve(null);
 				} else if (dir === root) {
 					resolve(null);
 				} else {
@@ -39,6 +55,8 @@ module.exports.sync = (filename, opts) => {
 
 		if (file) {
 			return path.join(dir, file);
+		} else if (isLastDirEqualTo(dir, opts.stopDir)) {
+			return null;
 		} else if (dir === root) {
 			return null;
 		}

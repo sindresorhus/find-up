@@ -39,7 +39,9 @@ module.exports.sync = (filename, opts) => {
 
 		if (file) {
 			return path.join(dir, file);
-		} else if (dir === root) {
+		}
+
+		if (dir === root) {
 			return null;
 		}
 

@@ -6,7 +6,7 @@
 ## Install
 
 ```
-$ npm install --save find-up
+$ npm install find-up
 ```
 
 

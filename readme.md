@@ -78,6 +78,7 @@ Directory to start from.
 - [find-up-cli](https://github.com/sindresorhus/find-up-cli) - CLI for this module
 - [pkg-up](https://github.com/sindresorhus/pkg-up) - Find the closest package.json file
 - [pkg-dir](https://github.com/sindresorhus/pkg-dir) - Find the root directory of an npm package
+- [resolve-from](https://github.com/sindresorhus/resolve-from) - Resolve the path of a module like `require.resolve()` but from a given path
 
 
 ## License

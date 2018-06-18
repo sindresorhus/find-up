@@ -2,11 +2,9 @@
 const path = require('path');
 const locatePath = require('locate-path');
 
-module.exports = (filename, opts) => {
-	opts = opts || {};
-
+module.exports = (filename, opts = {}) => {
 	const startDir = path.resolve(opts.cwd || '');
-	const root = path.parse(startDir).root;
+	const {root} = path.parse(startDir);
 
 	const filenames = [].concat(filename);
 
@@ -25,11 +23,9 @@ module.exports = (filename, opts) => {
 	});
 };
 
-module.exports.sync = (filename, opts) => {
-	opts = opts || {};
-
+module.exports.sync = (filename, opts = {}) => {
 	let dir = path.resolve(opts.cwd || '');
-	const root = path.parse(dir).root;
+	const {root} = path.parse(dir);
 
 	const filenames = [].concat(filename);
 

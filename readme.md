@@ -23,19 +23,18 @@ $ npm install find-up
 								└── example.js
 ```
 
+`example.js`
+
 ```js
-// example.js
 const findUp = require('find-up');
 
-findUp('unicorn.png').then(filepath => {
-	console.log(filepath);
+(async () => {
+	console.log(await findUp('unicorn.png'));
 	//=> '/Users/sindresorhus/unicorn.png'
-});
 
-findUp(['rainbow.png', 'unicorn.png']).then(filepath => {
-	console.log(filepath);
+	console.log(await findUp(['rainbow.png', 'unicorn.png']));
 	//=> '/Users/sindresorhus/unicorn.png'
-});
+})();
 ```
 
 
@@ -64,6 +63,8 @@ Type: `string`
 Filename of the file to find.
 
 #### options
+
+Type: `Object`
 
 ##### cwd
 

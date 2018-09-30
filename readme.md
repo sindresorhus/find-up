@@ -47,6 +47,12 @@ const findUp = require('find-up');
 
 	console.log(await findUp(['rainbow.png', 'unicorn.png']));
 	//=> '/Users/sindresorhus/unicorn.png'
+
+	console.log(await findUp(dir => Promise.resolve('unicorn.png')));
+	//=> '/Users/sindresorhus/unicorn.png'
+
+	console.log(await findUp(dir => dir));
+	//=> '/Users/sindresorhus'
 })();
 ```
 
@@ -71,9 +77,11 @@ Returns the first filepath found (by respecting the order) or `null`.
 
 #### filename
 
-Type: `string`
+Type: `string` `Function`
 
-Filename of the file to find.
+Filename of the file to find, or a custom matcher function to be called with each directory until it returns a filepath to stop the search or the root directory has been reached and nothing was found. When using a matcher function, if you want to check whether a file exists, use [`fs.access()`](https://nodejs.org/api/fs.html#fs_fs_access_path_mode_callback) - this is done automatically when `filename` is a string.
+
+When using async mode, `filename` may optionally be an `async` function or return a `Promise` for the filepath.
 
 #### options
 

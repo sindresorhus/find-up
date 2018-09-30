@@ -10,9 +10,10 @@ module.exports = (filename, opts = {}) => {
 
 	return new Promise(resolve => {
 		(function find(dir) {
-			locatePath(filenames, {cwd: dir}).then(file => {
+			const locating = typeof filename === 'function' ? Promise.resolve(filename(dir)) : locatePath(filenames, {cwd: dir});
+			locating.then(file => {
 				if (file) {
-					resolve(path.join(dir, file));
+					resolve(path.resolve(dir, file));
 				} else if (dir === root) {
 					resolve(null);
 				} else {
@@ -31,10 +32,10 @@ module.exports.sync = (filename, opts = {}) => {
 
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
-		const file = locatePath.sync(filenames, {cwd: dir});
+		const file = typeof filename === 'function' ? filename(dir) : locatePath.sync(filenames, {cwd: dir});
 
 		if (file) {
-			return path.join(dir, file);
+			return path.resolve(dir, file);
 		}
 
 		if (dir === root) {

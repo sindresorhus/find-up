@@ -44,6 +44,8 @@
 	},
 	"devDependencies": {
 		"ava": "*",
+		"is-path-inside": "^2.0.0",
+		"pify": "^4.0.0",
 		"tempy": "^0.2.1",
 		"xo": "*"
 	}

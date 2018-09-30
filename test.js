@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import test from 'ava';
+import isPathInside from 'is-path-inside';
+import pify from 'pify';
 import tempy from 'tempy';
 import m from '.';
 
@@ -243,4 +245,88 @@ test('sync (not found, custom cwd)', t => {
 	});
 
 	t.is(filePath, null);
+});
+
+test('async (custom function)', async t => {
+	const cwd = process.cwd();
+
+	t.is(await m(dir => {
+		t.is(dir, cwd);
+		return dir;
+	}), cwd);
+
+	t.is(await m(() => {
+		return '.';
+	}), cwd);
+
+	t.is(await m(() => {
+		return Promise.resolve('foo.txt');
+	}), path.join(cwd, 'foo.txt'));
+
+	t.is(await m(() => {
+		return '..';
+	}), path.join(cwd, '..'));
+
+	t.is(await m(dir => {
+		return (dir !== cwd) && dir;
+	}), path.join(cwd, '..'));
+
+	t.is(await m(dir => {
+		return (dir !== cwd) && 'foo.txt';
+	}), path.join(cwd, '..', 'foo.txt'));
+
+	const {root} = path.parse(cwd);
+	const visited = new Set();
+	t.is(await m(async dir => {
+		t.is(typeof dir, 'string');
+		const stat = await pify(fs.stat)(dir);
+		t.true(stat.isDirectory());
+		t.true((dir === cwd) || isPathInside(cwd, dir));
+		t.false(visited.has(dir));
+		visited.add(dir);
+	}), null);
+	t.true(visited.has(cwd));
+	t.true(visited.has(root));
+});
+
+test('sync (custom function)', t => {
+	const cwd = process.cwd();
+
+	t.is(m.sync(dir => {
+		t.is(dir, cwd);
+		return dir;
+	}), cwd);
+
+	t.is(m.sync(() => {
+		return '.';
+	}), cwd);
+
+	t.is(m.sync(() => {
+		return 'foo.txt';
+	}), path.join(cwd, 'foo.txt'));
+
+	t.is(m.sync(() => {
+		return '..';
+	}), path.join(cwd, '..'));
+
+	t.is(m.sync(dir => {
+		return (dir !== cwd) && dir;
+	}), path.join(cwd, '..'));
+
+	t.is(m.sync(dir => {
+		return (dir !== cwd) && 'foo.txt';
+	}), path.join(cwd, '..', 'foo.txt'));
+
+	const {root} = path.parse(cwd);
+	const visited = new Set();
+	t.is(m.sync(dir => {
+		t.is(typeof dir, 'string');
+		const stat = fs.statSync(dir);
+		t.true(stat.isDirectory());
+		t.true((dir === cwd) || isPathInside(cwd, dir));
+		t.false(visited.has(dir));
+		visited.add(dir);
+	}), null);
+	t.true(visited.has(cwd));
+	t.true(visited.has(root));
 });

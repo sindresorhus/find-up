@@ -46,6 +46,7 @@
 	"devDependencies": {
 		"ava": "*",
 		"tempy": "^0.2.1",
+		"tsd-check": "^0.2.1",
 		"xo": "*"
 	}
 }

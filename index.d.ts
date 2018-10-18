@@ -8,15 +8,19 @@ export interface IOptions {
  *
  * @param filename Filename of the file to find.
  */
-declare function findUp (filename: string, options?: IOptions):
-	Promise<string | null>;
+declare function findUp(
+	filename: string,
+	options?: IOptions,
+): Promise<string | null>;
 /**
  * Returns a `Promise` for either the first filepath found (by respecting the order) or `null` if none could be found.
  *
  * @param filename Filename of the file to find.
  */
-declare function findUp (filename: string[], options?: IOptions):
-	Promise<string | null>;
+declare function findUp(
+	filename: string[],
+	options?: IOptions,
+): Promise<string | null>;
 
 declare namespace findUp {
 	/**
@@ -24,13 +28,13 @@ declare namespace findUp {
 	 *
 	 * @param filename Filename of the file to find.
 	 */
-	function sync (filename: string, options?: IOptions): string | null;
+	function sync(filename: string, options?: IOptions): string | null;
 	/**
 	 * Returns the first filepath found (by respecting the order) or null.
 	 *
 	 * @param filename Filename of the file to find.
 	 */
-	function sync (filename: string[], options?: IOptions): string | null;
+	function sync(filename: string[], options?: IOptions): string | null;
 }
 
 export default findUp;

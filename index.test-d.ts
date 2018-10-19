@@ -14,6 +14,12 @@ import findUp from '.';
 	} else {
 		expectType<null>(path);
 	}
+	path = await findUp(['package.json']);
+	if (typeof path === 'string') {
+		expectType<string>(path);
+	} else {
+		expectType<null>(path);
+	}
 
 	path = findUp.sync('package.json');
 	if (typeof path === 'string') {
@@ -22,6 +28,12 @@ import findUp from '.';
 		expectType<null>(path);
 	}
 	path = findUp.sync('package.json', { cwd: './' });
+	if (typeof path === 'string') {
+		expectType<string>(path);
+	} else {
+		expectType<null>(path);
+	}
+	path = findUp.sync(['package.json']);
 	if (typeof path === 'string') {
 		expectType<string>(path);
 	} else {

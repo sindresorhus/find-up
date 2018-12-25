@@ -87,6 +87,11 @@ Default: `process.cwd()`
 Directory to start from.
 
 
+## Security
+
+To report a security vulnerability, please use the [Tidelift security contact](https://tidelift.com/security). Tidelift will coordinate the fix and disclosure.
+
+
 ## Related
 
 - [find-up-cli](https://github.com/sindresorhus/find-up-cli) - CLI for this module

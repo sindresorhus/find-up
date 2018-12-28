@@ -39,6 +39,8 @@ $ npm install find-up
 `example.js`
 
 ```js
+const fs = require('fs');
+const path = require('path');
 const findUp = require('find-up');
 
 (async () => {
@@ -48,10 +50,17 @@ const findUp = require('find-up');
 	console.log(await findUp(['rainbow.png', 'unicorn.png']));
 	//=> '/Users/sindresorhus/unicorn.png'
 
-	console.log(await findUp(dir => Promise.resolve('unicorn.png')));
-	//=> '/Users/sindresorhus/unicorn.png'
+	console.log(await findUp(dir => {
+		return fs.existsSync(path.join(dir, 'unicorn.png')) && 'foo';
+	}));
+	//=> '/Users/sindresorhus/foo'
 
-	console.log(await findUp(dir => dir));
+    console.log(await findUp(async dir => {
+        const children = await fs.promises.readdir(dir);
+		if (children.some(fileName => fileName.endsWith('.png'))) {
+            return dir;
+        }
+	}));
 	//=> '/Users/sindresorhus'
 })();
 ```
@@ -60,6 +69,7 @@ const findUp = require('find-up');
 ## API
 
 ### findUp(filename, [options])
+### findUp(matcher, [options])
 
 Returns a `Promise` for either the filepath or `null` if it couldn't be found.
 
@@ -68,20 +78,27 @@ Returns a `Promise` for either the filepath or `null` if it couldn't be found.
 Returns a `Promise` for either the first filepath found (by respecting the order) or `null` if none could be found.
 
 ### findUp.sync(filename, [options])
+### findUp.sync(matcher, [options])
 
 Returns a filepath or `null`.
 
 ### findUp.sync([filenameA, filenameB], [options])
 
-Returns the first filepath found (by respecting the order) or `null`.
+Returns the first filepath found (by respecting the order) or `null` if none could be found.
 
 #### filename
 
-Type: `string` `Function`
+Type: `string`
 
-Filename of the file to find, or a custom matcher function to be called with each directory until it returns a filepath to stop the search or the root directory has been reached and nothing was found. When using a matcher function, if you want to check whether a file exists, use [`fs.access()`](https://nodejs.org/api/fs.html#fs_fs_access_path_mode_callback) - this is done automatically when `filename` is a string.
+Filename of the file to find.
 
-When using async mode, `filename` may optionally be an `async` function or return a `Promise` for the filepath.
+#### matcher
+
+Type: `Function`
+
+A function that will be called with each directory until it returns a filepath to stop the search or the root directory has been reached and nothing was found. Useful if you want to match files with a certain pattern, set of permissions, or other advanced use cases.
+
+When using async mode, `matcher` may optionally be an `async` function or return a `Promise` for the filepath.
 
 #### options
 

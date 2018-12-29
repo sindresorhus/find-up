@@ -247,7 +247,7 @@ test('sync (not found, custom cwd)', t => {
 	t.is(filePath, null);
 });
 
-test('async (custom function)', async t => {
+test('async (matcher function)', async t => {
 	const cwd = process.cwd();
 
 	t.is(await m(dir => {
@@ -259,8 +259,8 @@ test('async (custom function)', async t => {
 		return '.';
 	}), cwd);
 
-	t.is(await m(() => {
-		return Promise.resolve('foo.txt');
+	t.is(await m(async () => {
+		return 'foo.txt';
 	}), path.join(cwd, 'foo.txt'));
 
 	t.is(await m(() => {
@@ -274,7 +274,10 @@ test('async (custom function)', async t => {
 	t.is(await m(dir => {
 		return (dir !== cwd) && 'foo.txt';
 	}), path.join(cwd, '..', 'foo.txt'));
+});
 
+test('async (not found, matcher function)', async t => {
+	const cwd = process.cwd();
 	const {root} = path.parse(cwd);
 	const visited = new Set();
 	t.is(await m(async dir => {
@@ -289,7 +292,7 @@ test('async (custom function)', async t => {
 	t.true(visited.has(root));
 });
 
-test('sync (custom function)', t => {
+test('sync (matcher function)', t => {
 	const cwd = process.cwd();
 
 	t.is(m.sync(dir => {
@@ -316,7 +319,10 @@ test('sync (custom function)', t => {
 	t.is(m.sync(dir => {
 		return (dir !== cwd) && 'foo.txt';
 	}), path.join(cwd, '..', 'foo.txt'));
+});
 
+test('sync (not found, matcher function)', t => {
+	const cwd = process.cwd();
 	const {root} = path.parse(cwd);
 	const visited = new Set();
 	t.is(m.sync(dir => {

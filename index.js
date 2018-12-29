@@ -8,7 +8,7 @@ module.exports = (filename, opts = {}) => {
 
 	const filenames = [].concat(filename);
 
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 		(function find(dir) {
 			const locating = typeof filename === 'function' ? Promise.resolve(filename(dir)) : locatePath(filenames, {cwd: dir});
 			locating.then(file => {
@@ -19,7 +19,7 @@ module.exports = (filename, opts = {}) => {
 				} else {
 					find(path.dirname(dir));
 				}
-			});
+			}).catch(reject);
 		})(startDir);
 	});
 };

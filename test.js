@@ -292,6 +292,32 @@ test('async (not found, matcher function)', async t => {
 	t.true(visited.has(root));
 });
 
+test('async (matcher function throws)', async t => {
+	const cwd = process.cwd();
+	const visited = new Set();
+	await t.throwsAsync(m(dir => {
+		visited.add(dir);
+		throw new Error('Some sync throw');
+	}), {
+		message : 'Some sync throw'
+	});
+	t.true(visited.has(cwd));
+	t.is(visited.size, 1);
+});
+
+test('async (matcher function rejects)', async t => {
+	const cwd = process.cwd();
+	const visited = new Set();
+	await t.throwsAsync(m(async dir => {
+		visited.add(dir);
+		throw new Error('Some async rejection');
+	}), {
+		message : 'Some async rejection'
+	});
+	t.true(visited.has(cwd));
+	t.is(visited.size, 1);
+});
+
 test('sync (matcher function)', t => {
 	const cwd = process.cwd();
 
@@ -335,4 +361,19 @@ test('sync (not found, matcher function)', t => {
 	}), null);
 	t.true(visited.has(cwd));
 	t.true(visited.has(root));
+});
+
+test('sync (matcher function throws)', t => {
+	const cwd = process.cwd();
+	const visited = new Set();
+	t.throws(() => {
+		m.sync(dir => {
+			visited.add(dir);
+			throw new Error('Some problem');
+		})
+	}, {
+		message : 'Some problem'
+	});
+	t.true(visited.has(cwd));
+	t.is(visited.size, 1);
 });

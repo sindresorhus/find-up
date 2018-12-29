@@ -55,11 +55,11 @@ const findUp = require('find-up');
 	}));
 	//=> '/Users/sindresorhus/foo'
 
-    console.log(await findUp(async dir => {
-        const children = await fs.promises.readdir(dir);
+	console.log(await findUp(async dir => {
+		const children = await fs.promises.readdir(dir);
 		if (children.some(fileName => fileName.endsWith('.png'))) {
-            return dir;
-        }
+			return dir;
+		}
 	}));
 	//=> '/Users/sindresorhus'
 })();

@@ -299,7 +299,7 @@ test('async (matcher function throws)', async t => {
 		visited.add(dir);
 		throw new Error('Some sync throw');
 	}), {
-		message : 'Some sync throw'
+		message: 'Some sync throw'
 	});
 	t.true(visited.has(cwd));
 	t.is(visited.size, 1);
@@ -312,7 +312,7 @@ test('async (matcher function rejects)', async t => {
 		visited.add(dir);
 		throw new Error('Some async rejection');
 	}), {
-		message : 'Some async rejection'
+		message: 'Some async rejection'
 	});
 	t.true(visited.has(cwd));
 	t.is(visited.size, 1);
@@ -370,9 +370,9 @@ test('sync (matcher function throws)', t => {
 		m.sync(dir => {
 			visited.add(dir);
 			throw new Error('Some problem');
-		})
+		});
 	}, {
-		message : 'Some problem'
+		message: 'Some problem'
 	});
 	t.true(visited.has(cwd));
 	t.is(visited.size, 1);

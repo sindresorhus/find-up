@@ -13,10 +13,11 @@
 		"node": ">=6"
 	},
 	"scripts": {
-		"test": "xo && ava"
+		"test": "xo && ava && tsd"
 	},
 	"files": [
-		"index.js"
+		"index.js",
+		"index.d.ts"
 	],
 	"keywords": [
 		"find",
@@ -43,8 +44,9 @@
 		"locate-path": "^3.0.0"
 	},
 	"devDependencies": {
-		"ava": "*",
+		"ava": "^1.4.1",
 		"tempy": "^0.2.1",
-		"xo": "*"
+		"tsd": "^0.7.2",
+		"xo": "^0.24.0"
 	}
 }

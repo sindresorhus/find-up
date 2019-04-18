@@ -10,7 +10,7 @@
 		"url": "sindresorhus.com"
 	},
 	"engines": {
-		"node": ">=6"
+		"node": ">=8"
 	},
 	"scripts": {
 		"test": "xo && ava && tsd"
@@ -35,17 +35,16 @@
 		"parents",
 		"folder",
 		"directory",
-		"dir",
 		"walk",
 		"walking",
 		"path"
 	],
 	"dependencies": {
-		"locate-path": "^3.0.0"
+		"locate-path": "^4.0.0"
 	},
 	"devDependencies": {
 		"ava": "^1.4.1",
-		"tempy": "^0.2.1",
+		"tempy": "^0.3.0",
 		"tsd": "^0.7.2",
 		"xo": "^0.24.0"
 	}

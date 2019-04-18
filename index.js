@@ -2,19 +2,19 @@
 const path = require('path');
 const locatePath = require('locate-path');
 
-module.exports = (filename, options = {}) => {
+module.exports = (name, options = {}) => {
 	const startDirectory = path.resolve(options.cwd || '');
 	const {root} = path.parse(startDirectory);
 
-	const filenames = [].concat(filename);
+	const paths = [].concat(name);
 
 	return new Promise(resolve => {
 		(function find(directory) {
-			locatePath(filenames, {cwd: directory}).then(file => {
-				if (file) {
-					resolve(path.join(directory, file));
+			locatePath(paths, {cwd: directory}).then(foundPath => {
+				if (foundPath) {
+					resolve(path.join(directory, foundPath));
 				} else if (directory === root) {
-					resolve(null);
+					resolve();
 				} else {
 					find(path.dirname(directory));
 				}
@@ -23,22 +23,22 @@ module.exports = (filename, options = {}) => {
 	});
 };
 
-module.exports.sync = (filename, options = {}) => {
+module.exports.sync = (name, options = {}) => {
 	let directory = path.resolve(options.cwd || '');
 	const {root} = path.parse(directory);
 
-	const filenames = [].concat(filename);
+	const paths = [].concat(name);
 
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
-		const file = locatePath.sync(filenames, {cwd: directory});
+		const foundPath = locatePath.sync(paths, {cwd: directory});
 
-		if (file) {
-			return path.join(directory, file);
+		if (foundPath) {
+			return path.join(directory, foundPath);
 		}
 
 		if (directory === root) {
-			return null;
+			return;
 		}
 
 		directory = path.dirname(directory);

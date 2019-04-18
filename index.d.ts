@@ -13,8 +13,8 @@ declare const findUp: {
 	/**
 	Find a file or directory by walking up parent directories.
 
-	@param filename - Filename of the file or an array of files to find.
-	@returns Either the first filepath found (by respecting the order of `filename`s) or `null`.
+	@param name - Name of the file or directory to find. Can be multiple.
+	@returns The first path found (by respecting the order of `name`s) or `undefined` if none could be found.
 
 	@example
 	```
@@ -39,17 +39,15 @@ declare const findUp: {
 	})();
 	```
 	*/
-	(filename: string | string[], options?: findUp.Options): Promise<
-		string | null
-	>;
+	(name: string | string[], options?: findUp.Options): Promise<string | undefined>;
 
 	/**
 	Synchronously find a file or directory by walking up parent directories.
 
-	@param filename - Filename of the file or an array of files to find.
-	@returns Either the first filepath found (by respecting the order of `filename`s) or `null`.
+	@param name - Name of the file or directory to find. Can be multiple.
+	@returns The first path found (by respecting the order of `names`s) or `undefined` if none could be found.
 	*/
-	sync(filename: string | string[], options?: findUp.Options): string | null;
+	sync(name: string | string[], options?: findUp.Options): string | undefined;
 };
 
 export = findUp;

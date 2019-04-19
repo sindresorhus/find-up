@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
+import {promisify} from 'util';
 import test from 'ava';
 import isPathInside from 'is-path-inside';
-import pify from 'pify';
 import tempy from 'tempy';
 import findUp from '.';
 
@@ -285,7 +285,7 @@ test('async (not found, matcher function)', async t => {
 	const visited = new Set();
 	t.is(await findUp(async directory => {
 		t.is(typeof directory, 'string');
-		const stat = await pify(fs.stat)(directory);
+		const stat = await promisify(fs.stat)(directory);
 		t.true(stat.isDirectory());
 		t.true((directory === cwd) || isPathInside(cwd, directory));
 		t.false(visited.has(directory));

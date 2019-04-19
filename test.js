@@ -4,32 +4,35 @@ import test from 'ava';
 import isPathInside from 'is-path-inside';
 import pify from 'pify';
 import tempy from 'tempy';
-import m from '.';
+import findUp from '.';
 
 const name = {
-	pkgDir: 'find-up',
-	pkg: 'package.json',
-	fixtureDir: 'fixture',
+	packageDirectory: 'find-up',
+	packageJson: 'package.json',
+	fixtureDirectory: 'fixture',
 	baz: 'baz.js',
 	qux: 'qux.js'
 };
 
 // These paths are relative to the project root
-const rel = {
-	fixtureDir: name.fixtureDir
+const relative = {
+	fixtureDirectory: name.fixtureDirectory
 };
-rel.baz = path.join(rel.fixtureDir, name.baz);
-rel.qux = path.join(rel.fixtureDir, name.qux);
-rel.barDir = path.join(rel.fixtureDir, 'foo', 'bar');
+relative.baz = path.join(relative.fixtureDirectory, name.baz);
+relative.qux = path.join(relative.fixtureDirectory, name.qux);
+relative.barDir = path.join(relative.fixtureDirectory, 'foo', 'bar');
 
-const abs = {
-	pkgDir: __dirname
+const absolute = {
+	packageDirectory: __dirname
 };
-abs.pkg = path.join(abs.pkgDir, name.pkg);
-abs.fixtureDir = path.join(abs.pkgDir, name.fixtureDir);
-abs.baz = path.join(abs.fixtureDir, name.baz);
-abs.qux = path.join(abs.fixtureDir, name.qux);
-abs.barDir = path.join(abs.fixtureDir, 'foo', 'bar');
+absolute.packageJson = path.join(absolute.packageDirectory, name.packageJson);
+absolute.fixtureDirectory = path.join(
+	absolute.packageDirectory,
+	name.fixtureDirectory
+);
+absolute.baz = path.join(absolute.fixtureDirectory, name.baz);
+absolute.qux = path.join(absolute.fixtureDirectory, name.qux);
+absolute.barDir = path.join(absolute.fixtureDirectory, 'foo', 'bar');
 
 // Create a disjoint directory, used for the not-found tests
 test.beforeEach(t => {
@@ -42,237 +45,237 @@ test.afterEach(t => {
 });
 
 test('async (child file)', async t => {
-	const filePath = await m(name.pkg);
+	const foundPath = await findUp(name.packageJson);
 
-	t.is(filePath, abs.pkg);
+	t.is(foundPath, absolute.packageJson);
 });
 
 test('sync (child file)', t => {
-	const filePath = m.sync(name.pkg);
+	const foundPath = findUp.sync(name.packageJson);
 
-	t.is(filePath, abs.pkg);
+	t.is(foundPath, absolute.packageJson);
 });
 
-test('async (child dir)', async t => {
-	const filePath = await m(name.fixtureDir);
+test('async (child directory)', async t => {
+	const foundPath = await findUp(name.fixtureDirectory);
 
-	t.is(filePath, abs.fixtureDir);
+	t.is(foundPath, absolute.fixtureDirectory);
 });
 
-test('sync (child dir)', t => {
-	const filePath = m.sync(name.fixtureDir);
+test('sync (child directory)', t => {
+	const foundPath = findUp.sync(name.fixtureDirectory);
 
-	t.is(filePath, abs.fixtureDir);
+	t.is(foundPath, absolute.fixtureDirectory);
 });
 
 test('async (child file, custom cwd)', async t => {
-	const filePath = await m(name.baz, {
-		cwd: rel.fixtureDir
+	const foundPath = await findUp(name.baz, {
+		cwd: relative.fixtureDirectory
 	});
 
-	t.is(filePath, abs.baz);
+	t.is(foundPath, absolute.baz);
 });
 
 test('sync (child file, custom cwd)', t => {
-	const filePath = m.sync(name.baz, {
-		cwd: rel.fixtureDir
+	const foundPath = findUp.sync(name.baz, {
+		cwd: relative.fixtureDirectory
 	});
 
-	t.is(filePath, abs.baz);
+	t.is(foundPath, absolute.baz);
 });
 
 test('async (child file, array, custom cwd)', async t => {
-	const filePath = await m([name.baz], {
-		cwd: rel.fixtureDir
+	const foundPath = await findUp([name.baz], {
+		cwd: relative.fixtureDirectory
 	});
 
-	t.is(filePath, abs.baz);
+	t.is(foundPath, absolute.baz);
 });
 
 test('sync (child file, array, custom cwd)', t => {
-	const filePath = m.sync([name.baz], {
-		cwd: rel.fixtureDir
+	const foundPath = findUp.sync([name.baz], {
+		cwd: relative.fixtureDirectory
 	});
 
-	t.is(filePath, abs.baz);
+	t.is(foundPath, absolute.baz);
 });
 
 test('async (first child file, array, custom cwd)', async t => {
-	const filePath = await m([name.qux, name.baz], {
-		cwd: rel.fixtureDir
+	const foundPath = await findUp([name.qux, name.baz], {
+		cwd: relative.fixtureDirectory
 	});
 
-	t.is(filePath, abs.qux);
+	t.is(foundPath, absolute.qux);
 });
 
 test('sync (first child file, array, custom cwd)', t => {
-	const filePath = m.sync([name.qux, name.baz], {
-		cwd: rel.fixtureDir
+	const foundPath = findUp.sync([name.qux, name.baz], {
+		cwd: relative.fixtureDirectory
 	});
 
-	t.is(filePath, abs.qux);
+	t.is(foundPath, absolute.qux);
 });
 
 test('async (second child file, array, custom cwd)', async t => {
-	const filePath = await m(['fake', name.baz], {
-		cwd: rel.fixtureDir
+	const foundPath = await findUp(['fake', name.baz], {
+		cwd: relative.fixtureDirectory
 	});
 
-	t.is(filePath, abs.baz);
+	t.is(foundPath, absolute.baz);
 });
 
 test('sync (second child file, array, custom cwd)', t => {
-	const filePath = m.sync(['fake', name.baz], {
-		cwd: rel.fixtureDir
+	const foundPath = findUp.sync(['fake', name.baz], {
+		cwd: relative.fixtureDirectory
 	});
 
-	t.is(filePath, abs.baz);
+	t.is(foundPath, absolute.baz);
 });
 
 test('async (cwd)', async t => {
-	const filePath = await m(name.pkgDir, {
-		cwd: abs.pkgDir
+	const foundPath = await findUp(name.packageDirectory, {
+		cwd: absolute.packageDirectory
 	});
 
-	t.is(filePath, abs.pkgDir);
+	t.is(foundPath, absolute.packageDirectory);
 });
 
 test('sync (cwd)', t => {
-	const filePath = m.sync(name.pkgDir, {
-		cwd: abs.pkgDir
+	const foundPath = findUp.sync(name.packageDirectory, {
+		cwd: absolute.packageDirectory
 	});
 
-	t.is(filePath, abs.pkgDir);
+	t.is(foundPath, absolute.packageDirectory);
 });
 
 test('async (cousin file, custom cwd)', async t => {
-	const filePath = await m(name.baz, {
-		cwd: rel.barDir
+	const foundPath = await findUp(name.baz, {
+		cwd: relative.barDir
 	});
 
-	t.is(filePath, abs.baz);
+	t.is(foundPath, absolute.baz);
 });
 
 test('sync (cousin file, custom cwd)', t => {
-	const filePath = m.sync(name.baz, {
-		cwd: rel.barDir
+	const foundPath = findUp.sync(name.baz, {
+		cwd: relative.barDir
 	});
 
-	t.is(filePath, abs.baz);
+	t.is(foundPath, absolute.baz);
 });
 
 test('async (nested descendant file)', async t => {
-	const filePath = await m(rel.baz);
+	const foundPath = await findUp(relative.baz);
 
-	t.is(filePath, abs.baz);
+	t.is(foundPath, absolute.baz);
 });
 
 test('sync (nested descendant file)', t => {
-	const filePath = m.sync(rel.baz);
+	const foundPath = findUp.sync(relative.baz);
 
-	t.is(filePath, abs.baz);
+	t.is(foundPath, absolute.baz);
 });
 
-test('async (nested descendant dir)', async t => {
-	const filePath = await m(rel.barDir);
+test('async (nested descendant directory)', async t => {
+	const foundPath = await findUp(relative.barDir);
 
-	t.is(filePath, abs.barDir);
+	t.is(foundPath, absolute.barDir);
 });
 
-test('sync (nested descendant dir)', t => {
-	const filePath = m.sync(rel.barDir);
+test('sync (nested descendant directory)', t => {
+	const foundPath = findUp.sync(relative.barDir);
 
-	t.is(filePath, abs.barDir);
+	t.is(foundPath, absolute.barDir);
 });
 
-test('async (nested cousin dir, custom cwd)', async t => {
-	const filePath = await m(rel.barDir, {
-		cwd: rel.fixtureDir
+test('async (nested cousin directory, custom cwd)', async t => {
+	const foundPath = await findUp(relative.barDir, {
+		cwd: relative.fixtureDirectory
 	});
 
-	t.is(filePath, abs.barDir);
+	t.is(foundPath, absolute.barDir);
 });
 
-test('sync (nested cousin dir, custom cwd)', t => {
-	const filePath = m.sync(rel.barDir, {
-		cwd: rel.fixtureDir
+test('sync (nested cousin directory, custom cwd)', t => {
+	const foundPath = findUp.sync(relative.barDir, {
+		cwd: relative.fixtureDirectory
 	});
 
-	t.is(filePath, abs.barDir);
+	t.is(foundPath, absolute.barDir);
 });
 
-test('async (ancestor dir, custom cwd)', async t => {
-	const filePath = await m(name.fixtureDir, {
-		cwd: rel.barDir
+test('async (ancestor directory, custom cwd)', async t => {
+	const foundPath = await findUp(name.fixtureDirectory, {
+		cwd: relative.barDir
 	});
 
-	t.is(filePath, abs.fixtureDir);
+	t.is(foundPath, absolute.fixtureDirectory);
 });
 
-test('sync (ancestor dir, custom cwd)', t => {
-	const filePath = m.sync(name.fixtureDir, {
-		cwd: rel.barDir
+test('sync (ancestor directory, custom cwd)', t => {
+	const foundPath = findUp.sync(name.fixtureDirectory, {
+		cwd: relative.barDir
 	});
 
-	t.is(filePath, abs.fixtureDir);
+	t.is(foundPath, absolute.fixtureDirectory);
 });
 
 test('async (not found)', async t => {
-	const filePath = await m('somenonexistentfile.js');
+	const foundPath = await findUp('somenonexistentfile.js');
 
-	t.is(filePath, null);
+	t.is(foundPath, undefined);
 });
 
 test('sync (not found)', t => {
-	const filePath = m.sync('somenonexistentfile.js');
+	const foundPath = findUp.sync('somenonexistentfile.js');
 
-	t.is(filePath, null);
+	t.is(foundPath, undefined);
 });
 
 // Both tests start in a disjoint directory. `package.json` should not be found
-// and `null` should be returned.
+// and `undefined` should be returned.
 test('async (not found, custom cwd)', async t => {
-	const filePath = await m(name.pkg, {
+	const foundPath = await findUp(name.packageJson, {
 		cwd: t.context.disjoint
 	});
 
-	t.is(filePath, null);
+	t.is(foundPath, undefined);
 });
 
 test('sync (not found, custom cwd)', t => {
-	const filePath = m.sync(name.pkg, {
+	const foundPath = findUp.sync(name.packageJson, {
 		cwd: t.context.disjoint
 	});
 
-	t.is(filePath, null);
+	t.is(foundPath, undefined);
 });
 
 test('async (matcher function)', async t => {
 	const cwd = process.cwd();
 
-	t.is(await m(dir => {
-		t.is(dir, cwd);
-		return dir;
+	t.is(await findUp(directory => {
+		t.is(directory, cwd);
+		return directory;
 	}), cwd);
 
-	t.is(await m(() => {
+	t.is(await findUp(() => {
 		return '.';
 	}), cwd);
 
-	t.is(await m(async () => {
+	t.is(await findUp(async () => {
 		return 'foo.txt';
 	}), path.join(cwd, 'foo.txt'));
 
-	t.is(await m(() => {
+	t.is(await findUp(() => {
 		return '..';
 	}), path.join(cwd, '..'));
 
-	t.is(await m(dir => {
-		return (dir !== cwd) && dir;
+	t.is(await findUp(directory => {
+		return (directory !== cwd) && directory;
 	}), path.join(cwd, '..'));
 
-	t.is(await m(dir => {
-		return (dir !== cwd) && 'foo.txt';
+	t.is(await findUp(directory => {
+		return (directory !== cwd) && 'foo.txt';
 	}), path.join(cwd, '..', 'foo.txt'));
 });
 
@@ -280,14 +283,14 @@ test('async (not found, matcher function)', async t => {
 	const cwd = process.cwd();
 	const {root} = path.parse(cwd);
 	const visited = new Set();
-	t.is(await m(async dir => {
-		t.is(typeof dir, 'string');
-		const stat = await pify(fs.stat)(dir);
+	t.is(await findUp(async directory => {
+		t.is(typeof directory, 'string');
+		const stat = await pify(fs.stat)(directory);
 		t.true(stat.isDirectory());
-		t.true((dir === cwd) || isPathInside(cwd, dir));
-		t.false(visited.has(dir));
-		visited.add(dir);
-	}), null);
+		t.true((directory === cwd) || isPathInside(cwd, directory));
+		t.false(visited.has(directory));
+		visited.add(directory);
+	}), undefined);
 	t.true(visited.has(cwd));
 	t.true(visited.has(root));
 });
@@ -295,8 +298,8 @@ test('async (not found, matcher function)', async t => {
 test('async (matcher function throws)', async t => {
 	const cwd = process.cwd();
 	const visited = new Set();
-	await t.throwsAsync(m(dir => {
-		visited.add(dir);
+	await t.throwsAsync(findUp(directory => {
+		visited.add(directory);
 		throw new Error('Some sync throw');
 	}), {
 		message: 'Some sync throw'
@@ -308,8 +311,8 @@ test('async (matcher function throws)', async t => {
 test('async (matcher function rejects)', async t => {
 	const cwd = process.cwd();
 	const visited = new Set();
-	await t.throwsAsync(m(async dir => {
-		visited.add(dir);
+	await t.throwsAsync(findUp(async directory => {
+		visited.add(directory);
 		throw new Error('Some async rejection');
 	}), {
 		message: 'Some async rejection'
@@ -321,10 +324,10 @@ test('async (matcher function rejects)', async t => {
 test('async (matcher function stops early)', async t => {
 	const cwd = process.cwd();
 	const visited = new Set();
-	t.is(await m(async dir => {
-		visited.add(dir);
-		return m.stop;
-	}), null);
+	t.is(await findUp(async directory => {
+		visited.add(directory);
+		return findUp.stop;
+	}), undefined);
 	t.true(visited.has(cwd));
 	t.is(visited.size, 1);
 });
@@ -332,29 +335,29 @@ test('async (matcher function stops early)', async t => {
 test('sync (matcher function)', t => {
 	const cwd = process.cwd();
 
-	t.is(m.sync(dir => {
-		t.is(dir, cwd);
-		return dir;
+	t.is(findUp.sync(directory => {
+		t.is(directory, cwd);
+		return directory;
 	}), cwd);
 
-	t.is(m.sync(() => {
+	t.is(findUp.sync(() => {
 		return '.';
 	}), cwd);
 
-	t.is(m.sync(() => {
+	t.is(findUp.sync(() => {
 		return 'foo.txt';
 	}), path.join(cwd, 'foo.txt'));
 
-	t.is(m.sync(() => {
+	t.is(findUp.sync(() => {
 		return '..';
 	}), path.join(cwd, '..'));
 
-	t.is(m.sync(dir => {
-		return (dir !== cwd) && dir;
+	t.is(findUp.sync(directory => {
+		return (directory !== cwd) && directory;
 	}), path.join(cwd, '..'));
 
-	t.is(m.sync(dir => {
-		return (dir !== cwd) && 'foo.txt';
+	t.is(findUp.sync(directory => {
+		return (directory !== cwd) && 'foo.txt';
 	}), path.join(cwd, '..', 'foo.txt'));
 });
 
@@ -362,14 +365,14 @@ test('sync (not found, matcher function)', t => {
 	const cwd = process.cwd();
 	const {root} = path.parse(cwd);
 	const visited = new Set();
-	t.is(m.sync(dir => {
-		t.is(typeof dir, 'string');
-		const stat = fs.statSync(dir);
+	t.is(findUp.sync(directory => {
+		t.is(typeof directory, 'string');
+		const stat = fs.statSync(directory);
 		t.true(stat.isDirectory());
-		t.true((dir === cwd) || isPathInside(cwd, dir));
-		t.false(visited.has(dir));
-		visited.add(dir);
-	}), null);
+		t.true((directory === cwd) || isPathInside(cwd, directory));
+		t.false(visited.has(directory));
+		visited.add(directory);
+	}), undefined);
 	t.true(visited.has(cwd));
 	t.true(visited.has(root));
 });
@@ -378,8 +381,8 @@ test('sync (matcher function throws)', t => {
 	const cwd = process.cwd();
 	const visited = new Set();
 	t.throws(() => {
-		m.sync(dir => {
-			visited.add(dir);
+		findUp.sync(directory => {
+			visited.add(directory);
 			throw new Error('Some problem');
 		});
 	}, {
@@ -392,10 +395,10 @@ test('sync (matcher function throws)', t => {
 test('sync (matcher function stops early)', t => {
 	const cwd = process.cwd();
 	const visited = new Set();
-	t.is(m.sync(dir => {
-		visited.add(dir);
-		return m.stop;
-	}), null);
+	t.is(findUp.sync(directory => {
+		visited.add(directory);
+		return findUp.stop;
+	}), undefined);
 	t.true(visited.has(cwd));
 	t.is(visited.size, 1);
 });

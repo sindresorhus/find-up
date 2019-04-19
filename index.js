@@ -4,53 +4,53 @@ const locatePath = require('locate-path');
 
 const stop = Symbol('findUp.stop');
 
-module.exports = (filename, opts = {}) => {
-	const startDir = path.resolve(opts.cwd || '');
-	const {root} = path.parse(startDir);
+module.exports = async (name, options = {}) => {
+	let directory = path.resolve(options.cwd || '');
+	const {root} = path.parse(directory);
+	const paths = [].concat(name);
+	// eslint-disable-next-line no-constant-condition
+	while (true) {
+		// eslint-disable-next-line no-await-in-loop
+		const foundPath = await (typeof name === 'function' ? name(directory) : locatePath(paths, {cwd: directory}));
 
-	const filenames = [].concat(filename);
+		if (foundPath === stop) {
+			return;
+		}
 
-	return new Promise((resolve, reject) => {
-		(function find(dir) {
-			const locating = typeof filename === 'function' ? Promise.resolve(filename(dir)) : locatePath(filenames, {cwd: dir});
-			locating.then(file => {
-				if (file === stop) {
-					resolve(null);
-				} else if (file) {
-					resolve(path.resolve(dir, file));
-				} else if (dir === root) {
-					resolve(null);
-				} else {
-					find(path.dirname(dir));
-				}
-			}).catch(reject);
-		})(startDir);
-	});
+		if (foundPath) {
+			return path.resolve(directory, foundPath);
+		}
+
+		if (directory === root) {
+			return;
+		}
+
+		directory = path.dirname(directory);
+	}
 };
 
-module.exports.sync = (filename, opts = {}) => {
-	let dir = path.resolve(opts.cwd || '');
-	const {root} = path.parse(dir);
-
-	const filenames = [].concat(filename);
+module.exports.sync = (name, options = {}) => {
+	let directory = path.resolve(options.cwd || '');
+	const {root} = path.parse(directory);
+	const paths = [].concat(name);
 
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
-		const file = typeof filename === 'function' ? filename(dir) : locatePath.sync(filenames, {cwd: dir});
+		const foundPath = typeof name === 'function' ? name(directory) : locatePath.sync(paths, {cwd: directory});
 
-		if (file === stop) {
-			return null;
+		if (foundPath === stop) {
+			return;
 		}
 
-		if (file) {
-			return path.resolve(dir, file);
+		if (foundPath) {
+			return path.resolve(directory, foundPath);
 		}
 
-		if (dir === root) {
-			return null;
+		if (directory === root) {
+			return;
 		}
 
-		dir = path.dirname(dir);
+		directory = path.dirname(directory);
 	}
 };
 

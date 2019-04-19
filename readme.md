@@ -68,29 +68,30 @@ const findUp = require('find-up');
 
 ## API
 
-### findUp(filename, [options])
+
+### findUp(name, [options])
 ### findUp(matcher, [options])
 
-Returns a `Promise` for either the filepath or `null` if it couldn't be found.
+Returns a `Promise` for either the path or `undefined` if it couldn't be found.
 
-### findUp([filenameA, filenameB], [options])
+### findUp([nameA, nameB], [options])
 
-Returns a `Promise` for either the first filepath found (by respecting the order) or `null` if none could be found.
+Returns a `Promise` for either the first path found (by respecting the order) or `undefined` if none could be found.
 
-### findUp.sync(filename, [options])
+### findUp.sync(name, [options])
 ### findUp.sync(matcher, [options])
 
-Returns a filepath or `null`.
+Returns a path or `undefined` if it couldn't be found.
 
-### findUp.sync([filenameA, filenameB], [options])
+### findUp.sync([nameA, nameB], [options])
 
-Returns the first filepath found (by respecting the order) or `null` if none could be found.
+Returns the first path found (by respecting the order) or `undefined` if none could be found.
 
-#### filename
+#### name
 
 Type: `string`
 
-Filename of the file to find.
+Name of the file or directory to find.
 
 #### matcher
 
@@ -102,7 +103,7 @@ When using async mode, `matcher` may optionally be an `async` function or return
 
 #### options
 
-Type: `Object`
+Type: `object`
 
 ##### cwd
 

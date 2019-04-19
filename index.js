@@ -2,6 +2,8 @@
 const path = require('path');
 const locatePath = require('locate-path');
 
+const stop = Symbol('findUp.stop');
+
 module.exports = (filename, opts = {}) => {
 	const startDir = path.resolve(opts.cwd || '');
 	const {root} = path.parse(startDir);
@@ -12,7 +14,9 @@ module.exports = (filename, opts = {}) => {
 		(function find(dir) {
 			const locating = typeof filename === 'function' ? Promise.resolve(filename(dir)) : locatePath(filenames, {cwd: dir});
 			locating.then(file => {
-				if (file) {
+				if (file === stop) {
+					resolve(null);
+				} else if (file) {
 					resolve(path.resolve(dir, file));
 				} else if (dir === root) {
 					resolve(null);
@@ -34,6 +38,10 @@ module.exports.sync = (filename, opts = {}) => {
 	while (true) {
 		const file = typeof filename === 'function' ? filename(dir) : locatePath.sync(filenames, {cwd: dir});
 
+		if (file === stop) {
+			return null;
+		}
+
 		if (file) {
 			return path.resolve(dir, file);
 		}
@@ -45,3 +53,5 @@ module.exports.sync = (filename, opts = {}) => {
 		dir = path.dirname(dir);
 	}
 };
+
+module.exports.stop = stop;

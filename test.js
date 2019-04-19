@@ -318,6 +318,17 @@ test('async (matcher function rejects)', async t => {
 	t.is(visited.size, 1);
 });
 
+test('async (matcher function stops early)', async t => {
+	const cwd = process.cwd();
+	const visited = new Set();
+	t.is(await m(async dir => {
+		visited.add(dir);
+		return m.stop;
+	}), null);
+	t.true(visited.has(cwd));
+	t.is(visited.size, 1);
+});
+
 test('sync (matcher function)', t => {
 	const cwd = process.cwd();
 
@@ -374,6 +385,17 @@ test('sync (matcher function throws)', t => {
 	}, {
 		message: 'Some problem'
 	});
+	t.true(visited.has(cwd));
+	t.is(visited.size, 1);
+});
+
+test('sync (matcher function stops early)', t => {
+	const cwd = process.cwd();
+	const visited = new Set();
+	t.is(m.sync(dir => {
+		visited.add(dir);
+		return m.stop;
+	}), null);
 	t.true(visited.has(cwd));
 	t.is(visited.size, 1);
 });

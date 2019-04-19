@@ -91,9 +91,9 @@ Name of the file or directory to find.
 
 Type: `Function`
 
-A function that will be called with each directory until it returns a filepath to stop the search or the root directory has been reached and nothing was found. Useful if you want to match files with a certain pattern, set of permissions, or other advanced use cases.
+A function that will be called with each directory until it returns a `string` with the path, which stops the search, or the root directory has been reached and nothing was found. Useful if you want to match files with certain patterns, set of permissions, or other advanced use cases.
 
-When using async mode, `matcher` may optionally be an `async` function or return a `Promise` for the filepath.
+When using async mode, the `matcher` may optionally be an async or promise-returning function that returns the path.
 
 #### options
 

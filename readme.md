@@ -50,17 +50,11 @@ const findUp = require('find-up');
 	console.log(await findUp(['rainbow.png', 'unicorn.png']));
 	//=> '/Users/sindresorhus/unicorn.png'
 
-	console.log(await findUp(dir => {
-		return fs.existsSync(path.join(dir, 'unicorn.png')) && 'foo';
-	}));
-	//=> '/Users/sindresorhus/foo'
-
-	console.log(await findUp(async dir => {
-		const children = await fs.promises.readdir(dir);
-		if (children.some(fileName => fileName.endsWith('.png'))) {
-			return dir;
-		}
-	}));
+	const pathExists = filepath => fs.promises.access(filepath).then(_ => true).catch(_ => false);
+	console.log(await findUp(async (directory) => {
+		const hasUnicorns = await pathExists(path.join(directory, 'unicorn.png'));
+		return hasUnicorns && directory;
+	}});
 	//=> '/Users/sindresorhus'
 })();
 ```

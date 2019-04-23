@@ -70,7 +70,7 @@ declare const findUp: {
 	/**
 	Return this in a `matcher` function to stop the search and force `findUp` to immediately return `undefined`.
 	*/
-	stop: symbol
+	stop: unique symbol
 };
 
 export = findUp;

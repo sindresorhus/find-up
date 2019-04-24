@@ -7,6 +7,7 @@ declare namespace findUp {
 		*/
 		readonly cwd?: string;
 	}
+
 	type Match = string | symbol | undefined;
 }
 

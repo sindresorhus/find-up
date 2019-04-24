@@ -39,6 +39,8 @@ $ npm install find-up
 `example.js`
 
 ```js
+const fs = require('fs');
+const path = require('path');
 const findUp = require('find-up');
 
 (async () => {
@@ -47,13 +49,22 @@ const findUp = require('find-up');
 
 	console.log(await findUp(['rainbow.png', 'unicorn.png']));
 	//=> '/Users/sindresorhus/unicorn.png'
+
+	const pathExists = filepath => fs.promises.access(filepath).then(_ => true).catch(_ => false);
+	console.log(await findUp(async (directory) => {
+		const hasUnicorns = await pathExists(path.join(directory, 'unicorn.png'));
+		return hasUnicorns && directory;
+	}});
+	//=> '/Users/sindresorhus'
 })();
 ```
 
 
 ## API
 
+
 ### findUp(name, [options])
+### findUp(matcher, [options])
 
 Returns a `Promise` for either the path or `undefined` if it couldn't be found.
 
@@ -62,6 +73,7 @@ Returns a `Promise` for either the path or `undefined` if it couldn't be found.
 Returns a `Promise` for either the first path found (by respecting the order) or `undefined` if none could be found.
 
 ### findUp.sync(name, [options])
+### findUp.sync(matcher, [options])
 
 Returns a path or `undefined` if it couldn't be found.
 
@@ -75,6 +87,14 @@ Type: `string`
 
 Name of the file or directory to find.
 
+#### matcher
+
+Type: `Function`
+
+A function that will be called with each directory until it returns a `string` with the path, which stops the search, or the root directory has been reached and nothing was found. Useful if you want to match files with certain patterns, set of permissions, or other advanced use cases.
+
+When using async mode, the `matcher` may optionally be an async or promise-returning function that returns the path.
+
 #### options
 
 Type: `object`
@@ -86,6 +106,20 @@ Default: `process.cwd()`
 
 Directory to start from.
 
+### findUp.stop
+
+A [Symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) that can be returned by a `matcher` function to stop the search and cause `findUp` to immediately return `undefined`. Useful as a performance optimization in case the current working directory is deeply nested in the filesystem.
+
+```js
+const path = require('path');
+const findUp = require('find-up');
+
+(async () => {
+	await findUp((directory) => {
+		return path.basename(directory) === 'work' ? findUp.stop : 'logo.png';
+	});
+})();
+```
 
 ## Security
 

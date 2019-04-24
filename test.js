@@ -10,13 +10,15 @@ const name = {
 	packageDirectory: 'find-up',
 	packageJson: 'package.json',
 	fixtureDirectory: 'fixture',
+	modulesDirectory: 'node_modules',
 	baz: 'baz.js',
 	qux: 'qux.js'
 };
 
 // These paths are relative to the project root
 const relative = {
-	fixtureDirectory: name.fixtureDirectory
+	fixtureDirectory: name.fixtureDirectory,
+	modulesDirectory: name.modulesDirectory
 };
 relative.baz = path.join(relative.fixtureDirectory, name.baz);
 relative.qux = path.join(relative.fixtureDirectory, name.qux);
@@ -188,6 +190,22 @@ test('sync (nested descendant directory)', t => {
 	t.is(foundPath, absolute.barDir);
 });
 
+test('async (nested descendant directory, custom cwd)', async t => {
+	const filePath = await findUp(relative.barDir, {
+		cwd: relative.modulesDirectory
+	});
+
+	t.is(filePath, absolute.barDir);
+});
+
+test('sync (nested descendant directory, custom cwd)', t => {
+	const filePath = findUp.sync(relative.barDir, {
+		cwd: relative.modulesDirectory
+	});
+
+	t.is(filePath, absolute.barDir);
+});
+
 test('async (nested cousin directory, custom cwd)', async t => {
 	const foundPath = await findUp(relative.barDir, {
 		cwd: relative.fixtureDirectory
@@ -218,6 +236,46 @@ test('sync (ancestor directory, custom cwd)', t => {
 	});
 
 	t.is(foundPath, absolute.fixtureDirectory);
+});
+
+test('async (absolute directory)', async t => {
+	const filePath = await findUp(absolute.barDir);
+
+	t.is(filePath, absolute.barDir);
+});
+
+test('sync (absolute directory)', t => {
+	const filePath = findUp.sync(absolute.barDir);
+
+	t.is(filePath, absolute.barDir);
+});
+
+test('async (not found, absolute file)', async t => {
+	const filePath = await findUp(path.resolve('somenonexistentfile.js'));
+
+	t.is(filePath, undefined);
+});
+
+test('sync (not found, absolute file)', t => {
+	const filePath = findUp.sync(path.resolve('somenonexistentfile.js'));
+
+	t.is(filePath, undefined);
+});
+
+test('async (absolute directory, disjoint cwd)', async t => {
+	const filePath = await findUp(absolute.barDir, {
+		cwd: t.context.disjoint
+	});
+
+	t.is(filePath, absolute.barDir);
+});
+
+test('sync (absolute directory, disjoint cwd)', t => {
+	const filePath = findUp.sync(absolute.barDir, {
+		cwd: t.context.disjoint
+	});
+
+	t.is(filePath, absolute.barDir);
 });
 
 test('async (not found)', async t => {

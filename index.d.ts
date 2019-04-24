@@ -7,9 +7,8 @@ declare namespace findUp {
 		*/
 		readonly cwd?: string;
 	}
+	type Match = string | symbol | undefined;
 }
-
-type Match = string | boolean | null | undefined;
 
 declare const findUp: {
 	/**
@@ -49,7 +48,7 @@ declare const findUp: {
 	@param matcher - Called for each directory in the search. Return a path or `findUp.stop` to stop the search.
 	@returns The first path found or `undefined` if none could be found.
 	*/
-	(matcher: (directory: string) => (Match | Promise<Match>), options?: findUp.Options): Promise<string | undefined>;
+	(matcher: (directory: string) => (findUp.Match | Promise<findUp.Match>), options?: findUp.Options): Promise<string | undefined>;
 
 	/**
 	Synchronously find a file or directory by walking up parent directories.
@@ -65,7 +64,7 @@ declare const findUp: {
 	@param matcher - Called for each directory in the search. Return a path or `findUp.stop` to stop the search.
 	@returns The first path found or `undefined` if none could be found.
 	*/
-	sync(matcher: (directory: string) => Match, options?: findUp.Options): string | undefined;
+	sync(matcher: (directory: string) => findUp.Match, options?: findUp.Options): string | undefined;
 
 	/**
 	Return this in a `matcher` function to stop the search and force `findUp` to immediately return `undefined`.

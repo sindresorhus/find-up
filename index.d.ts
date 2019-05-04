@@ -8,6 +8,22 @@ declare namespace findUp {
 		readonly cwd?: string;
 	}
 
+	interface FullOptions extends Options {
+		/**
+		Type of path to find.
+
+		@default 'file'
+		*/
+		readonly type?: 'file' | 'directory';
+
+		/**
+		Allow symbolic links to match if they point to the requested path type.
+
+		@default true
+		*/
+		readonly allowSymlinks?: boolean;
+	}
+
 	type Match = string | symbol | undefined;
 }
 
@@ -41,7 +57,7 @@ declare const findUp: {
 	})();
 	```
 	*/
-	(name: string | string[], options?: findUp.Options): Promise<string | undefined>;
+	(name: string | string[], options?: findUp.FullOptions): Promise<string | undefined>;
 
 	/**
 	Find a file or directory by walking up parent directories.
@@ -57,7 +73,7 @@ declare const findUp: {
 	@param name - Name of the file or directory to find. Can be multiple.
 	@returns The first path found (by respecting the order of `name`s) or `undefined` if none could be found.
 	*/
-	sync(name: string | string[], options?: findUp.Options): string | undefined;
+	sync(name: string | string[], options?: findUp.FullOptions): string | undefined;
 
 	/**
 	Synchronously find a file or directory by walking up parent directories.

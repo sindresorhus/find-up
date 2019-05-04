@@ -106,6 +106,21 @@ Default: `process.cwd()`
 
 Directory to start from.
 
+##### type
+
+Type: `string`<br>
+Default: `file`<br>
+Values: `file` `directory`
+
+The type of paths that can match.
+
+##### allowSymlinks
+
+Type: `boolean`<br>
+Default: `true`
+
+Allow symbolic links to match if they point to the chosen path type.
+
 ### findUp.stop
 
 A [Symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) that can be returned by a `matcher` function to stop the search and cause `findUp` to immediately return `undefined`. Useful as a performance optimization in case the current working directory is deeply nested in the filesystem.

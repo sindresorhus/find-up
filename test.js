@@ -460,3 +460,21 @@ test('sync (matcher function stops early)', t => {
 	t.true(visited.has(cwd));
 	t.is(visited.size, 1);
 });
+
+test('sync (check if path exists)', t => {
+	t.true(findUp.exists(absolute.barDir));
+	t.true(findUp.exists(absolute.packageJson));
+	t.false(findUp.exists('fake'));
+});
+
+test('sync (check if path is directory)', t => {
+	t.true(findUp.isDirectory(absolute.barDir));
+	t.false(findUp.isDirectory(absolute.packageJson));
+	t.false(findUp.isDirectory('fake'));
+});
+
+test('sync (check if path is file)', t => {
+	t.false(findUp.isFile(absolute.barDir));
+	t.true(findUp.isFile(absolute.packageJson));
+	t.false(findUp.isFile('fake'));
+});

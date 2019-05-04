@@ -20,17 +20,18 @@ declare const findUp: {
 
 	@example
 	```
-	// /
-	// └── Users
-	// 		└── sindresorhus
-	// 				├── unicorn.png
-	// 				└── foo
-	// 						└── bar
-	// 								├── baz
-	// 								└── example.js
+	//	/
+	//	└── Users
+	//		└── sindresorhus
+	//			├── unicorn.png
+	//			└── foo
+	//				└── bar
+	//					├── baz
+	//					└── example.js
 
 	// example.js
-	import findUp = require('find-up');
+	const path = require('path');
+	const findUp = require('find-up');
 
 	(async () => {
 		console.log(await findUp('unicorn.png'));
@@ -38,6 +39,12 @@ declare const findUp: {
 
 		console.log(await findUp(['rainbow.png', 'unicorn.png']));
 		//=> '/Users/sindresorhus/unicorn.png'
+
+		console.log(await findUp(directory => {
+			const hasUnicorns = findUp.exists(path.join(directory, 'unicorn.png'));
+			return hasUnicorns && directory;
+		}));
+		//=> '/Users/sindresorhus'
 	})();
 	```
 	*/
@@ -69,6 +76,30 @@ declare const findUp: {
 
 	/**
 	Return this in a `matcher` function to stop the search and force `findUp` to immediately return `undefined`.
+	*/
+	exists(path: string): boolean;
+
+	/**
+	Returns `true` if the path is exists.
+
+	@param path - Path to the file or directory.
+	@returns `boolean`.
+	*/
+	isDirectory(path: string): boolean;
+
+	/**
+	Returns `true` if the path is directory
+
+	@param path - Path to the file or directory.
+	@returns `boolean`.
+	*/
+	isFile(path: string): boolean;
+
+	/**
+	Returns `true` if the path is file.
+
+	@param path - Path to the file or directory.
+	@returns `boolean`.
 	*/
 	readonly stop: unique symbol;
 };

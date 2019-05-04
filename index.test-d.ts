@@ -29,4 +29,8 @@ expectType<string | undefined>(findUp.sync(() => undefined, {cwd: ''}));
 expectType<string | undefined>(findUp.sync(() => findUp.stop));
 expectType<string | undefined>(findUp.sync(() => findUp.stop, {cwd: ''}));
 
+expectType<boolean>(findUp.exists('unicorn.png'));
+expectType<boolean>(findUp.isDirectory('unicorn.png'));
+expectType<boolean>(findUp.isFile('unicorn.png'));
+
 expectType<Symbol>(findUp.stop);

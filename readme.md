@@ -28,18 +28,17 @@ $ npm install find-up
 ```
 /
 └── Users
-		└── sindresorhus
-				├── unicorn.png
-				└── foo
-						└── bar
-								├── baz
-								└── example.js
+	└── sindresorhus
+		├── unicorn.png
+		└── foo
+			└── bar
+				├── baz
+				└── example.js
 ```
 
 `example.js`
 
 ```js
-const fs = require('fs');
 const path = require('path');
 const findUp = require('find-up');
 
@@ -50,11 +49,10 @@ const findUp = require('find-up');
 	console.log(await findUp(['rainbow.png', 'unicorn.png']));
 	//=> '/Users/sindresorhus/unicorn.png'
 
-	const pathExists = filepath => fs.promises.access(filepath).then(_ => true).catch(_ => false);
-	console.log(await findUp(async (directory) => {
-		const hasUnicorns = await pathExists(path.join(directory, 'unicorn.png'));
+	console.log(await findUp(directory => {
+		const hasUnicorns = findUp.exists(path.join(directory, 'unicorn.png'));
 		return hasUnicorns && directory;
-	}});
+	}));
 	//=> '/Users/sindresorhus'
 })();
 ```
@@ -105,6 +103,24 @@ Type: `string`<br>
 Default: `process.cwd()`
 
 Directory to start from.
+
+### findUp.exists(path)
+
+Returns `true` if the path is exists.
+
+### findUp.isDirectory(path)
+
+Returns `true` if the path is directory.
+
+### findUp.isFile(path)
+
+Returns `true` if the path is file.
+
+#### path
+
+Type: `string`
+
+Path to the file or directory.
 
 ### findUp.stop
 

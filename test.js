@@ -84,25 +84,27 @@ test('sync (explicit type file)', t => {
 	t.is(findUp.sync(name.packageJson, {type: 'directory'}), undefined);
 });
 
-test('async (symbolic links)', async t => {
-	const cwd = absolute.fixtureDirectory;
+if (process.platform !== 'win32') {
+	test('async (symbolic links)', async t => {
+		const cwd = absolute.fixtureDirectory;
 
-	t.is(await findUp(name.fileLink, {cwd}), absolute.fileLink);
-	t.is(await findUp(name.fileLink, {cwd, allowSymlinks: false}), undefined);
+		t.is(await findUp(name.fileLink, {cwd}), absolute.fileLink);
+		t.is(await findUp(name.fileLink, {cwd, allowSymlinks: false}), undefined);
 
-	t.is(await findUp(name.directoryLink, {cwd, type: 'directory'}), absolute.directoryLink);
-	t.is(await findUp(name.directoryLink, {cwd, type: 'directory', allowSymlinks: false}), undefined);
-});
+		t.is(await findUp(name.directoryLink, {cwd, type: 'directory'}), absolute.directoryLink);
+		t.is(await findUp(name.directoryLink, {cwd, type: 'directory', allowSymlinks: false}), undefined);
+	});
 
-test('sync (symbolic links)', t => {
-	const cwd = absolute.fixtureDirectory;
+	test('sync (symbolic links)', t => {
+		const cwd = absolute.fixtureDirectory;
 
-	t.is(findUp.sync(name.fileLink, {cwd}), absolute.fileLink);
-	t.is(findUp.sync(name.fileLink, {cwd, allowSymlinks: false}), undefined);
+		t.is(findUp.sync(name.fileLink, {cwd}), absolute.fileLink);
+		t.is(findUp.sync(name.fileLink, {cwd, allowSymlinks: false}), undefined);
 
-	t.is(findUp.sync(name.directoryLink, {cwd, type: 'directory'}), absolute.directoryLink);
-	t.is(findUp.sync(name.directoryLink, {cwd, type: 'directory', allowSymlinks: false}), undefined);
-});
+		t.is(findUp.sync(name.directoryLink, {cwd, type: 'directory'}), absolute.directoryLink);
+		t.is(findUp.sync(name.directoryLink, {cwd, type: 'directory', allowSymlinks: false}), undefined);
+	});
+}
 
 test('async (child file, custom cwd)', async t => {
 	const foundPath = await findUp(name.baz, {

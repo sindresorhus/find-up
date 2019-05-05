@@ -12,7 +12,8 @@ const name = {
 	fixtureDirectory: 'fixture',
 	modulesDirectory: 'node_modules',
 	baz: 'baz.js',
-	qux: 'qux.js'
+	qux: 'qux.js',
+	link: 'link.js'
 };
 
 // These paths are relative to the project root
@@ -22,6 +23,7 @@ const relative = {
 };
 relative.baz = path.join(relative.fixtureDirectory, name.baz);
 relative.qux = path.join(relative.fixtureDirectory, name.qux);
+relative.link = path.join(relative.fixtureDirectory, name.link);
 relative.barDir = path.join(relative.fixtureDirectory, 'foo', 'bar');
 
 const absolute = {
@@ -34,6 +36,7 @@ absolute.fixtureDirectory = path.join(
 );
 absolute.baz = path.join(absolute.fixtureDirectory, name.baz);
 absolute.qux = path.join(absolute.fixtureDirectory, name.qux);
+absolute.link = path.join(absolute.fixtureDirectory, name.link);
 absolute.barDir = path.join(absolute.fixtureDirectory, 'foo', 'bar');
 
 // Create a disjoint directory, used for the not-found tests
@@ -461,20 +464,51 @@ test('sync (matcher function stops early)', t => {
 	t.is(visited.size, 1);
 });
 
+test('async (check if path exists)', async t => {
+	t.true(await findUp.exists(absolute.link));
+	t.true(await findUp.exists(absolute.barDir));
+	t.true(await findUp.exists(absolute.packageJson));
+	t.false(await findUp.exists('fake'));
+});
+
+test('async (check if path is directory)', async t => {
+	t.false(await findUp.isDirectory(absolute.link));
+	t.true(await findUp.isDirectory(absolute.barDir));
+	t.false(await findUp.isDirectory(absolute.packageJson));
+	t.false(await findUp.isDirectory('fake'));
+});
+
+test('async (check if path is file)', async t => {
+	t.false(await findUp.isFile(absolute.link));
+	t.false(await findUp.isFile(absolute.barDir));
+	t.true(await findUp.isFile(absolute.packageJson));
+	t.false(await findUp.isFile('fake'));
+});
+
 test('sync (check if path exists)', t => {
-	t.true(findUp.exists(absolute.barDir));
-	t.true(findUp.exists(absolute.packageJson));
-	t.false(findUp.exists('fake'));
+	t.true(findUp.sync.exists(absolute.link));
+	t.true(findUp.sync.exists(absolute.barDir));
+	t.true(findUp.sync.exists(absolute.packageJson));
+	t.false(findUp.sync.exists('fake'));
 });
 
 test('sync (check if path is directory)', t => {
-	t.true(findUp.isDirectory(absolute.barDir));
-	t.false(findUp.isDirectory(absolute.packageJson));
-	t.false(findUp.isDirectory('fake'));
+	t.false(findUp.sync.isDirectory(absolute.link));
+	t.true(findUp.sync.isDirectory(absolute.barDir));
+	t.false(findUp.sync.isDirectory(absolute.packageJson));
+	t.false(findUp.sync.isDirectory('fake'));
 });
 
 test('sync (check if path is file)', t => {
-	t.false(findUp.isFile(absolute.barDir));
-	t.true(findUp.isFile(absolute.packageJson));
-	t.false(findUp.isFile('fake'));
+	t.false(findUp.sync.isFile(absolute.link));
+	t.false(findUp.sync.isFile(absolute.barDir));
+	t.true(findUp.sync.isFile(absolute.packageJson));
+	t.false(findUp.sync.isFile('fake'));
+});
+
+test('sync (check if path is symlink)', t => {
+	t.true(findUp.sync.isSymlink(absolute.link));
+	t.false(findUp.sync.isSymlink(absolute.barDir));
+	t.false(findUp.sync.isSymlink(absolute.packageJson));
+	t.false(findUp.sync.isSymlink('fake'));
 });

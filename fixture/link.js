@@ -1,0 +1,1 @@
+fixture/baz.js

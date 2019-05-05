@@ -49,8 +49,8 @@ const findUp = require('find-up');
 	console.log(await findUp(['rainbow.png', 'unicorn.png']));
 	//=> '/Users/sindresorhus/unicorn.png'
 
-	console.log(await findUp(directory => {
-		const hasUnicorns = findUp.exists(path.join(directory, 'unicorn.png'));
+	console.log(await findUp(async directory => {
+		const hasUnicorns = await findUp.exists(path.join(directory, 'unicorn.png'));
 		return hasUnicorns && directory;
 	}));
 	//=> '/Users/sindresorhus'
@@ -106,15 +106,35 @@ Directory to start from.
 
 ### findUp.exists(path)
 
-Returns `true` if the path is exists.
+Returns `Promise` when resolved if `true` the path is exists.
 
 ### findUp.isDirectory(path)
 
-Returns `true` if the path is directory.
+Returns `Promise` when resolved if `true` the path is directory.
 
 ### findUp.isFile(path)
 
+Returns `Promise` when resolved if `true` the path is file.
+
+### findUp.isSymlink(path)
+
+Returns `Promise` when resolved if `true` the path is symlink.
+
+### findUp.existsSync(path)
+
+Returns `true` if the path is exists.
+
+### findUp.isDirectorySync(path)
+
+Returns `true` if the path is directory.
+
+### findUp.isFileSync(path)
+
 Returns `true` if the path is file.
+
+### findUp.isSymlinkSync(path)
+
+Returns `true` if the path is symlink.
 
 #### path
 

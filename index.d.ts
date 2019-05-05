@@ -40,8 +40,8 @@ declare const findUp: {
 		console.log(await findUp(['rainbow.png', 'unicorn.png']));
 		//=> '/Users/sindresorhus/unicorn.png'
 
-		console.log(await findUp(directory => {
-			const hasUnicorns = findUp.exists(path.join(directory, 'unicorn.png'));
+		console.log(await findUp(async directory => {
+			const hasUnicorns = await findUp.exists(path.join(directory, 'unicorn.png'));
 			return hasUnicorns && directory;
 		}));
 		//=> '/Users/sindresorhus'
@@ -77,31 +77,41 @@ declare const findUp: {
 	/**
 	Return this in a `matcher` function to stop the search and force `findUp` to immediately return `undefined`.
 	*/
-	exists(path: string): boolean;
+	exists(path: string): Promise<boolean>;
 
 	/**
-	Returns `true` if the path is exists.
+	Returns `Promise` when resolved if `true` the path is exists.
 
 	@param path - Path to the file or directory.
-	@returns `boolean`.
+	@returns `Promise<boolean>`.
 	*/
-	isDirectory(path: string): boolean;
+	isDirectory(path: string): Promise<boolean>;
 
 	/**
-	Returns `true` if the path is directory
+	Returns `Promise` when resolved if `true` the path is directory
 
 	@param path - Path to the file or directory.
-	@returns `boolean`.
+	@returns `Promise<boolean>`.
 	*/
-	isFile(path: string): boolean;
+	isFile(path: string): Promise<boolean>;
 
 	/**
-	Returns `true` if the path is file.
+	Returns `Promise` when resolved if `true` the path is file.
 
 	@param path - Path to the file or directory.
-	@returns `boolean`.
+	@returns `Promise<boolean>`.
+	*/
+	isSymlink(path: string): Promise<boolean>;
+
+	/**
+	Returns `Promise` when resolved if `true` the path is symlink.
+
+	@param path - Path to the file or directory.
+	@returns `Promise<boolean>`.
 	*/
 	readonly stop: unique symbol;
 };
+
+
 
 export = findUp;

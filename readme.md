@@ -93,7 +93,7 @@ Type: `Function`
 
 A function that will be called with each directory until it returns a `string` with the path, which stops the search, or the root directory has been reached and nothing was found. Useful if you want to match files with certain patterns, set of permissions, or other advanced use cases.
 
-When using async mode, the `matcher` may optionally be an async or promise-returning function that returns the path.
+When using async mode, the `matcher` may optionally be an async or promise-returning function that returns the path. When a `matcher` function is used, only the `cwd` option is supported.
 
 #### options
 
@@ -105,6 +105,21 @@ Type: `string`<br>
 Default: `process.cwd()`
 
 Directory to start from.
+
+##### type
+
+Type: `string`<br>
+Default: `file`<br>
+Values: `file` `directory`
+
+The type of paths that can match.
+
+##### allowSymlinks
+
+Type: `boolean`<br>
+Default: `true`
+
+Allow symbolic links to match if they point to the chosen path type.
 
 ### findUp.stop
 

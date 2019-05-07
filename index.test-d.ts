@@ -5,6 +5,11 @@ expectType<Promise<string | undefined>>(findUp('unicorn.png'));
 expectType<Promise<string | undefined>>(findUp('unicorn.png', {cwd: ''}));
 expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png']));
 expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png'], {cwd: ''}));
+expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png'], {allowSymlinks: true}));
+expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png'], {allowSymlinks: false}));
+expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png'], {type: 'file'}));
+expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png'], {type: 'directory'}));
+
 expectType<Promise<string | undefined>>(findUp(() => 'unicorn.png'));
 expectType<Promise<string | undefined>>(findUp(() => 'unicorn.png', {cwd: ''}));
 expectType<Promise<string | undefined>>(findUp(() => undefined));
@@ -22,6 +27,11 @@ expectType<string | undefined>(findUp.sync('unicorn.png'));
 expectType<string | undefined>(findUp.sync('unicorn.png', {cwd: ''}));
 expectType<string | undefined>(findUp.sync(['rainbow.png', 'unicorn.png']));
 expectType<string | undefined>(findUp.sync(['rainbow.png', 'unicorn.png'], {cwd: ''}));
+expectType<string | undefined>(findUp.sync(['rainbow.png', 'unicorn.png'], {allowSymlinks: true}));
+expectType<string | undefined>(findUp.sync(['rainbow.png', 'unicorn.png'], {allowSymlinks: false}));
+expectType<string | undefined>(findUp.sync(['rainbow.png', 'unicorn.png'], {type: 'file'}));
+expectType<string | undefined>(findUp.sync(['rainbow.png', 'unicorn.png'], {type: 'directory'}));
+
 expectType<string | undefined>(findUp.sync(() => 'unicorn.png'));
 expectType<string | undefined>(findUp.sync(() => 'unicorn.png', {cwd: ''}));
 expectType<string | undefined>(findUp.sync(() => undefined));

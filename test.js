@@ -360,27 +360,27 @@ test('async (matcher function)', async t => {
 	t.is(await findUp(directory => {
 		t.is(directory, cwd);
 		return directory;
-	}), cwd);
+	}, {type: 'directory'}), cwd);
 
 	t.is(await findUp(() => {
 		return '.';
-	}), cwd);
+	}, {type: 'directory'}), cwd);
 
 	t.is(await findUp(async () => {
-		return 'foo.txt';
-	}), path.join(cwd, 'foo.txt'));
+		return 'package.json';
+	}), path.join(cwd, 'package.json'));
 
 	t.is(await findUp(() => {
 		return '..';
-	}), path.join(cwd, '..'));
+	}, {type: 'directory'}), path.join(cwd, '..'));
 
 	t.is(await findUp(directory => {
 		return (directory !== cwd) && directory;
-	}), path.join(cwd, '..'));
+	}, {type: 'directory'}), path.join(cwd, '..'));
 
 	t.is(await findUp(directory => {
-		return (directory !== cwd) && 'foo.txt';
-	}), path.join(cwd, '..', 'foo.txt'));
+		return (directory === cwd) && 'package.json';
+	}, {cwd: absolute.fixtureDirectory}), absolute.packageJson);
 });
 
 test('async (not found, matcher function)', async t => {
@@ -442,27 +442,27 @@ test('sync (matcher function)', t => {
 	t.is(findUp.sync(directory => {
 		t.is(directory, cwd);
 		return directory;
-	}), cwd);
+	}, {type: 'directory'}), cwd);
 
 	t.is(findUp.sync(() => {
 		return '.';
-	}), cwd);
+	}, {type: 'directory'}), cwd);
 
 	t.is(findUp.sync(() => {
-		return 'foo.txt';
-	}), path.join(cwd, 'foo.txt'));
+		return 'package.json';
+	}), path.join(cwd, 'package.json'));
 
 	t.is(findUp.sync(() => {
 		return '..';
-	}), path.join(cwd, '..'));
+	}, {type: 'directory'}), path.join(cwd, '..'));
 
 	t.is(findUp.sync(directory => {
 		return (directory !== cwd) && directory;
-	}), path.join(cwd, '..'));
+	}, {type: 'directory'}), path.join(cwd, '..'));
 
 	t.is(findUp.sync(directory => {
-		return (directory !== cwd) && 'foo.txt';
-	}), path.join(cwd, '..', 'foo.txt'));
+		return (directory === cwd) && 'package.json';
+	}, {cwd: absolute.fixtureDirectory}), absolute.packageJson);
 });
 
 test('sync (not found, matcher function)', t => {

@@ -13,7 +13,8 @@ const name = {
 	modulesDirectory: 'node_modules',
 	baz: 'baz.js',
 	qux: 'qux.js',
-	link: 'link.js'
+	fileLink: 'file-link',
+	directoryLink: 'directory-link'
 };
 
 // These paths are relative to the project root
@@ -23,7 +24,6 @@ const relative = {
 };
 relative.baz = path.join(relative.fixtureDirectory, name.baz);
 relative.qux = path.join(relative.fixtureDirectory, name.qux);
-relative.link = path.join(relative.fixtureDirectory, name.link);
 relative.barDir = path.join(relative.fixtureDirectory, 'foo', 'bar');
 
 const absolute = {
@@ -36,8 +36,9 @@ absolute.fixtureDirectory = path.join(
 );
 absolute.baz = path.join(absolute.fixtureDirectory, name.baz);
 absolute.qux = path.join(absolute.fixtureDirectory, name.qux);
-absolute.link = path.join(absolute.fixtureDirectory, name.link);
 absolute.barDir = path.join(absolute.fixtureDirectory, 'foo', 'bar');
+absolute.fileLink = path.join(absolute.fixtureDirectory, name.fileLink);
+absolute.directoryLink = path.join(absolute.fixtureDirectory, name.directoryLink);
 
 // Create a disjoint directory, used for the not-found tests
 test.beforeEach(t => {
@@ -62,16 +63,48 @@ test('sync (child file)', t => {
 });
 
 test('async (child directory)', async t => {
-	const foundPath = await findUp(name.fixtureDirectory);
+	const foundPath = await findUp(name.fixtureDirectory, {type: 'directory'});
 
 	t.is(foundPath, absolute.fixtureDirectory);
 });
 
 test('sync (child directory)', t => {
-	const foundPath = findUp.sync(name.fixtureDirectory);
+	const foundPath = findUp.sync(name.fixtureDirectory, {type: 'directory'});
 
 	t.is(foundPath, absolute.fixtureDirectory);
 });
+
+test('async (explicit type file)', async t => {
+	t.is(await findUp(name.packageJson, {type: 'file'}), absolute.packageJson);
+	t.is(await findUp(name.packageJson, {type: 'directory'}), undefined);
+});
+
+test('sync (explicit type file)', t => {
+	t.is(findUp.sync(name.packageJson, {type: 'file'}), absolute.packageJson);
+	t.is(findUp.sync(name.packageJson, {type: 'directory'}), undefined);
+});
+
+if (process.platform !== 'win32') {
+	test('async (symbolic links)', async t => {
+		const cwd = absolute.fixtureDirectory;
+
+		t.is(await findUp(name.fileLink, {cwd}), absolute.fileLink);
+		t.is(await findUp(name.fileLink, {cwd, allowSymlinks: false}), undefined);
+
+		t.is(await findUp(name.directoryLink, {cwd, type: 'directory'}), absolute.directoryLink);
+		t.is(await findUp(name.directoryLink, {cwd, type: 'directory', allowSymlinks: false}), undefined);
+	});
+
+	test('sync (symbolic links)', t => {
+		const cwd = absolute.fixtureDirectory;
+
+		t.is(findUp.sync(name.fileLink, {cwd}), absolute.fileLink);
+		t.is(findUp.sync(name.fileLink, {cwd, allowSymlinks: false}), undefined);
+
+		t.is(findUp.sync(name.directoryLink, {cwd, type: 'directory'}), absolute.directoryLink);
+		t.is(findUp.sync(name.directoryLink, {cwd, type: 'directory', allowSymlinks: false}), undefined);
+	});
+}
 
 test('async (child file, custom cwd)', async t => {
 	const foundPath = await findUp(name.baz, {
@@ -139,7 +172,8 @@ test('sync (second child file, array, custom cwd)', t => {
 
 test('async (cwd)', async t => {
 	const foundPath = await findUp(name.packageDirectory, {
-		cwd: absolute.packageDirectory
+		cwd: absolute.packageDirectory,
+		type: 'directory'
 	});
 
 	t.is(foundPath, absolute.packageDirectory);
@@ -147,7 +181,8 @@ test('async (cwd)', async t => {
 
 test('sync (cwd)', t => {
 	const foundPath = findUp.sync(name.packageDirectory, {
-		cwd: absolute.packageDirectory
+		cwd: absolute.packageDirectory,
+		type: 'directory'
 	});
 
 	t.is(foundPath, absolute.packageDirectory);
@@ -182,20 +217,21 @@ test('sync (nested descendant file)', t => {
 });
 
 test('async (nested descendant directory)', async t => {
-	const foundPath = await findUp(relative.barDir);
+	const foundPath = await findUp(relative.barDir, {type: 'directory'});
 
 	t.is(foundPath, absolute.barDir);
 });
 
 test('sync (nested descendant directory)', t => {
-	const foundPath = findUp.sync(relative.barDir);
+	const foundPath = findUp.sync(relative.barDir, {type: 'directory'});
 
 	t.is(foundPath, absolute.barDir);
 });
 
 test('async (nested descendant directory, custom cwd)', async t => {
 	const filePath = await findUp(relative.barDir, {
-		cwd: relative.modulesDirectory
+		cwd: relative.modulesDirectory,
+		type: 'directory'
 	});
 
 	t.is(filePath, absolute.barDir);
@@ -203,7 +239,8 @@ test('async (nested descendant directory, custom cwd)', async t => {
 
 test('sync (nested descendant directory, custom cwd)', t => {
 	const filePath = findUp.sync(relative.barDir, {
-		cwd: relative.modulesDirectory
+		cwd: relative.modulesDirectory,
+		type: 'directory'
 	});
 
 	t.is(filePath, absolute.barDir);
@@ -211,7 +248,8 @@ test('sync (nested descendant directory, custom cwd)', t => {
 
 test('async (nested cousin directory, custom cwd)', async t => {
 	const foundPath = await findUp(relative.barDir, {
-		cwd: relative.fixtureDirectory
+		cwd: relative.fixtureDirectory,
+		type: 'directory'
 	});
 
 	t.is(foundPath, absolute.barDir);
@@ -219,7 +257,8 @@ test('async (nested cousin directory, custom cwd)', async t => {
 
 test('sync (nested cousin directory, custom cwd)', t => {
 	const foundPath = findUp.sync(relative.barDir, {
-		cwd: relative.fixtureDirectory
+		cwd: relative.fixtureDirectory,
+		type: 'directory'
 	});
 
 	t.is(foundPath, absolute.barDir);
@@ -227,7 +266,8 @@ test('sync (nested cousin directory, custom cwd)', t => {
 
 test('async (ancestor directory, custom cwd)', async t => {
 	const foundPath = await findUp(name.fixtureDirectory, {
-		cwd: relative.barDir
+		cwd: relative.barDir,
+		type: 'directory'
 	});
 
 	t.is(foundPath, absolute.fixtureDirectory);
@@ -235,20 +275,21 @@ test('async (ancestor directory, custom cwd)', async t => {
 
 test('sync (ancestor directory, custom cwd)', t => {
 	const foundPath = findUp.sync(name.fixtureDirectory, {
-		cwd: relative.barDir
+		cwd: relative.barDir,
+		type: 'directory'
 	});
 
 	t.is(foundPath, absolute.fixtureDirectory);
 });
 
 test('async (absolute directory)', async t => {
-	const filePath = await findUp(absolute.barDir);
+	const filePath = await findUp(absolute.barDir, {type: 'directory'});
 
 	t.is(filePath, absolute.barDir);
 });
 
 test('sync (absolute directory)', t => {
-	const filePath = findUp.sync(absolute.barDir);
+	const filePath = findUp.sync(absolute.barDir, {type: 'directory'});
 
 	t.is(filePath, absolute.barDir);
 });
@@ -267,7 +308,8 @@ test('sync (not found, absolute file)', t => {
 
 test('async (absolute directory, disjoint cwd)', async t => {
 	const filePath = await findUp(absolute.barDir, {
-		cwd: t.context.disjoint
+		cwd: t.context.disjoint,
+		type: 'directory'
 	});
 
 	t.is(filePath, absolute.barDir);
@@ -275,7 +317,8 @@ test('async (absolute directory, disjoint cwd)', async t => {
 
 test('sync (absolute directory, disjoint cwd)', t => {
 	const filePath = findUp.sync(absolute.barDir, {
-		cwd: t.context.disjoint
+		cwd: t.context.disjoint,
+		type: 'directory'
 	});
 
 	t.is(filePath, absolute.barDir);
@@ -465,49 +508,56 @@ test('sync (matcher function stops early)', t => {
 });
 
 test('async (check if path exists)', async t => {
-	t.true(await findUp.exists(absolute.link));
+	t.true(await findUp.exists(absolute.directoryLink));
+	t.true(await findUp.exists(absolute.fileLink));
 	t.true(await findUp.exists(absolute.barDir));
 	t.true(await findUp.exists(absolute.packageJson));
 	t.false(await findUp.exists('fake'));
 });
 
 test('async (check if path is directory)', async t => {
-	t.false(await findUp.isDirectory(absolute.link));
+	t.true(await findUp.isDirectory(absolute.directoryLink));
+	t.false(await findUp.isDirectory(absolute.fileLink));
 	t.true(await findUp.isDirectory(absolute.barDir));
 	t.false(await findUp.isDirectory(absolute.packageJson));
 	t.false(await findUp.isDirectory('fake'));
 });
 
 test('async (check if path is file)', async t => {
-	t.false(await findUp.isFile(absolute.link));
+	t.false(await findUp.isFile(absolute.directoryLink));
+	t.true(await findUp.isFile(absolute.fileLink));
 	t.false(await findUp.isFile(absolute.barDir));
 	t.true(await findUp.isFile(absolute.packageJson));
 	t.false(await findUp.isFile('fake'));
 });
 
 test('sync (check if path exists)', t => {
-	t.true(findUp.sync.exists(absolute.link));
+	t.true(findUp.sync.exists(absolute.directoryLink));
+	t.true(findUp.sync.exists(absolute.fileLink));
 	t.true(findUp.sync.exists(absolute.barDir));
 	t.true(findUp.sync.exists(absolute.packageJson));
 	t.false(findUp.sync.exists('fake'));
 });
 
 test('sync (check if path is directory)', t => {
-	t.false(findUp.sync.isDirectory(absolute.link));
+	t.true(findUp.sync.isDirectory(absolute.directoryLink));
+	t.false(findUp.sync.isDirectory(absolute.fileLink));
 	t.true(findUp.sync.isDirectory(absolute.barDir));
 	t.false(findUp.sync.isDirectory(absolute.packageJson));
 	t.false(findUp.sync.isDirectory('fake'));
 });
 
 test('sync (check if path is file)', t => {
-	t.false(findUp.sync.isFile(absolute.link));
+	t.false(findUp.sync.isFile(absolute.directoryLink));
+	t.true(findUp.sync.isFile(absolute.fileLink));
 	t.false(findUp.sync.isFile(absolute.barDir));
 	t.true(findUp.sync.isFile(absolute.packageJson));
 	t.false(findUp.sync.isFile('fake'));
 });
 
 test('sync (check if path is symlink)', t => {
-	t.true(findUp.sync.isSymlink(absolute.link));
+	t.true(findUp.sync.isSymlink(absolute.directoryLink));
+	t.true(findUp.sync.isSymlink(absolute.fileLink));
 	t.false(findUp.sync.isSymlink(absolute.barDir));
 	t.false(findUp.sync.isSymlink(absolute.packageJson));
 	t.false(findUp.sync.isSymlink('fake'));

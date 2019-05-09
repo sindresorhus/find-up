@@ -51,10 +51,13 @@ module.exports = async (name, options = {}) => {
 	let directory = path.resolve(options.cwd || '');
 	const {root} = path.parse(directory);
 	const paths = [].concat(name);
+
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
 		// eslint-disable-next-line no-await-in-loop
-		const foundPath = await (typeof name === 'function' ? name(directory) : locatePath(paths, {cwd: directory}));
+		const foundPath = await (typeof name === 'function' ?
+			name(directory) :
+			locatePath(paths, {...options, cwd: directory}));
 
 		if (foundPath === stop) {
 			return;
@@ -79,7 +82,9 @@ module.exports.sync = (name, options = {}) => {
 
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
-		const foundPath = typeof name === 'function' ? name(directory) : locatePath.sync(paths, {cwd: directory});
+		const foundPath = typeof name === 'function' ?
+			name(directory) :
+			locatePath.sync(paths, {...options, cwd: directory});
 
 		if (foundPath === stop) {
 			return;

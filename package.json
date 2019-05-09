@@ -40,7 +40,7 @@
 		"path"
 	],
 	"dependencies": {
-		"locate-path": "^4.0.0",
+		"locate-path": "^5.0.0",
 		"path-exists": "^4.0.0",
 		"path-type": "^4.0.0"
 	},

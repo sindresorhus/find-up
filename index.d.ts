@@ -66,26 +66,53 @@ declare const findUp: {
 	*/
 	(matcher: (directory: string) => (findUp.Match | Promise<findUp.Match>), options?: findUp.MatcherOptions): Promise<string | undefined>;
 
-	/**
-	Synchronously find a file or directory by walking up parent directories.
+	sync: {
+		/**
+		Synchronously find a file or directory by walking up parent directories.
+		@param name - Name of the file or directory to find. Can be multiple.
+		@returns The first path found (by respecting the order of `name`s) or `undefined` if none could be found.
+		*/
+		(name: string | string[], options?: findUp.Options): string | undefined;
 
-	@param name - Name of the file or directory to find. Can be multiple.
-	@returns The first path found (by respecting the order of `name`s) or `undefined` if none could be found.
-	*/
-	sync(name: string | string[], options?: findUp.Options): string | undefined;
+		/**
+		Synchronously find a file or directory by walking up parent directories.
+		@param matcher - Called for each directory in the search. Return a path or `findUp.stop` to stop the search.
+		@returns The first path found or `undefined` if none could be found.
+		*/
+		(matcher: (directory: string) => findUp.Match, options?: findUp.MatcherOptions): string | undefined;
 
-	/**
-	Synchronously find a file or directory by walking up parent directories.
+		/**
+		Returns if `true` the path is exists.
 
-	@param matcher - Called for each directory in the search. Return a path or `findUp.stop` to stop the search.
-	@returns The first path found or `undefined` if none could be found.
-	*/
-	sync(matcher: (directory: string) => findUp.Match, options?: findUp.MatcherOptions): string | undefined;
+		@param path - Path to the file or directory.
+		@returns `boolean`.
+		*/
+		exists(path: string): boolean;
 
-	/**
-	Return this in a `matcher` function to stop the search and force `findUp` to immediately return `undefined`.
-	*/
-	exists(path: string): Promise<boolean>;
+		/**
+		Returns if `true` the path is directory
+
+		@param path - Path to the file or directory.
+		@returns `boolean`.
+		*/
+		isDirectory(path: string): boolean;
+
+		/**
+		Returns if `true` the path is file.
+
+		@param path - Path to the file or directory.
+		@returns `boolean`.
+		*/
+		isFile(path: string): boolean;
+
+		/**
+		Returns if `true` the path is symlink.
+
+		@param path - Path to the file or directory.
+		@returns `boolean`.
+		*/
+		isSymlink(path: string): boolean;
+	}
 
 	/**
 	Returns `Promise` when resolved if `true` the path is exists.
@@ -93,7 +120,7 @@ declare const findUp: {
 	@param path - Path to the file or directory.
 	@returns `Promise<boolean>`.
 	*/
-	isDirectory(path: string): Promise<boolean>;
+	exists(path: string): Promise<boolean>;
 
 	/**
 	Returns `Promise` when resolved if `true` the path is directory
@@ -101,7 +128,7 @@ declare const findUp: {
 	@param path - Path to the file or directory.
 	@returns `Promise<boolean>`.
 	*/
-	isFile(path: string): Promise<boolean>;
+	isDirectory(path: string): Promise<boolean>;
 
 	/**
 	Returns `Promise` when resolved if `true` the path is file.
@@ -109,13 +136,18 @@ declare const findUp: {
 	@param path - Path to the file or directory.
 	@returns `Promise<boolean>`.
 	*/
-	isSymlink(path: string): Promise<boolean>;
+	isFile(path: string): Promise<boolean>;
 
 	/**
 	Returns `Promise` when resolved if `true` the path is symlink.
 
 	@param path - Path to the file or directory.
 	@returns `Promise<boolean>`.
+	*/
+	isSymlink(path: string): Promise<boolean>;
+
+	/**
+	Return this in a `matcher` function to stop the search and force `findUp` to immediately return `undefined`.
 	*/
 	readonly stop: findUp.StopSymbol;
 };

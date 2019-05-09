@@ -6,47 +6,6 @@ const pathExists = require('path-exists');
 
 const stop = Symbol('findUp.stop');
 
-const isSymlink = path => {
-	if (typeof path !== 'string') {
-		throw new TypeError('Expected a string');
-	}
-
-	return pathType.isSymlink(path);
-};
-
-const exists = async path => {
-	if (typeof path !== 'string') {
-		throw new TypeError('Expected a string');
-	}
-
-	const symlink = await isSymlink(path);
-	return symlink || pathExists(path);
-};
-
-const isFile = async path => await exists(path) ? pathType.isFile(path) : false;
-
-const isDirectory = async path => await exists(path) ? pathType.isDirectory(path) : false;
-
-const isSymlinkSync = path => {
-	if (typeof path !== 'string') {
-		throw new TypeError('Expected a string');
-	}
-
-	return pathType.isSymlinkSync(path);
-};
-
-const existsSync = path => {
-	if (typeof path !== 'string') {
-		throw new TypeError('Expected a string');
-	}
-
-	return isSymlinkSync(path) || pathExists.sync(path);
-};
-
-const isFileSync = path => existsSync(path) ? pathType.isFileSync(path) : false;
-
-const isDirectorySync = path => existsSync(path) ? pathType.isDirectorySync(path) : false;
-
 module.exports = async (name, options = {}) => {
 	let directory = path.resolve(options.cwd || '');
 	const {root} = path.parse(directory);
@@ -102,20 +61,20 @@ module.exports.sync = (name, options = {}) => {
 	}
 };
 
-module.exports.exists = exists;
+module.exports.exists = pathExists;
 
-module.exports.isFile = isFile;
+module.exports.isFile = pathType.isFile;
 
-module.exports.isDirectory = isDirectory;
+module.exports.isDirectory = pathType.isDirectory;
 
-module.exports.isSymlink = isSymlink;
+module.exports.isSymlink = pathType.isSymlink;
 
-module.exports.sync.exists = existsSync;
+module.exports.sync.exists = pathExists.sync;
 
-module.exports.sync.isFile = isFileSync;
+module.exports.sync.isFile = pathType.isFileSync;
 
-module.exports.sync.isDirectory = isDirectorySync;
+module.exports.sync.isDirectory = pathType.isDirectorySync;
 
-module.exports.sync.isSymlink = isSymlinkSync;
+module.exports.sync.isSymlink = pathType.isSymlinkSync;
 
 module.exports.stop = stop;

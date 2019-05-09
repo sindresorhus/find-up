@@ -50,6 +50,8 @@ test.afterEach(t => {
 	fs.rmdirSync(t.context.disjoint);
 });
 
+const isNotWindows = process.platform !== 'win32';
+
 test('async (child file)', async t => {
 	const foundPath = await findUp(name.packageJson);
 
@@ -84,7 +86,7 @@ test('sync (explicit type file)', t => {
 	t.is(findUp.sync(name.packageJson, {type: 'directory'}), undefined);
 });
 
-if (process.platform !== 'win32') {
+if (isNotWindows) {
 	test('async (symbolic links)', async t => {
 		const cwd = absolute.fixtureDirectory;
 
@@ -508,57 +510,87 @@ test('sync (matcher function stops early)', t => {
 });
 
 test('async (check if path exists)', async t => {
-	t.true(await findUp.exists(absolute.directoryLink));
-	t.true(await findUp.exists(absolute.fileLink));
+	if (isNotWindows) {
+		t.true(await findUp.exists(absolute.directoryLink));
+		t.true(await findUp.exists(absolute.fileLink));
+	}
+
 	t.true(await findUp.exists(absolute.barDir));
 	t.true(await findUp.exists(absolute.packageJson));
 	t.false(await findUp.exists('fake'));
 });
 
 test('async (check if path is directory)', async t => {
-	t.true(await findUp.isDirectory(absolute.directoryLink));
-	t.false(await findUp.isDirectory(absolute.fileLink));
+	if (isNotWindows) {
+		t.true(await findUp.isDirectory(absolute.directoryLink));
+		t.false(await findUp.isDirectory(absolute.fileLink));
+	}
+
 	t.true(await findUp.isDirectory(absolute.barDir));
 	t.false(await findUp.isDirectory(absolute.packageJson));
 	t.false(await findUp.isDirectory('fake'));
 });
 
 test('async (check if path is file)', async t => {
-	t.false(await findUp.isFile(absolute.directoryLink));
-	t.true(await findUp.isFile(absolute.fileLink));
+	if (isNotWindows) {
+		t.false(await findUp.isFile(absolute.directoryLink));
+		t.true(await findUp.isFile(absolute.fileLink));
+	}
+
 	t.false(await findUp.isFile(absolute.barDir));
 	t.true(await findUp.isFile(absolute.packageJson));
 	t.false(await findUp.isFile('fake'));
 });
 
+if (isNotWindows) {
+	test('async (check if path is symlink)', async t => {
+		t.true(await findUp.isSymlink(absolute.directoryLink));
+		t.true(await findUp.isSymlink(absolute.fileLink));
+		t.false(await findUp.isSymlink(absolute.barDir));
+		t.false(await findUp.isSymlink(absolute.packageJson));
+		t.false(await findUp.isSymlink('fake'));
+	});
+}
+
 test('sync (check if path exists)', t => {
-	t.true(findUp.sync.exists(absolute.directoryLink));
-	t.true(findUp.sync.exists(absolute.fileLink));
+	if (isNotWindows) {
+		t.true(findUp.sync.exists(absolute.directoryLink));
+		t.true(findUp.sync.exists(absolute.fileLink));
+	}
+
 	t.true(findUp.sync.exists(absolute.barDir));
 	t.true(findUp.sync.exists(absolute.packageJson));
 	t.false(findUp.sync.exists('fake'));
 });
 
 test('sync (check if path is directory)', t => {
-	t.true(findUp.sync.isDirectory(absolute.directoryLink));
-	t.false(findUp.sync.isDirectory(absolute.fileLink));
+	if (isNotWindows) {
+		t.true(findUp.sync.isDirectory(absolute.directoryLink));
+		t.false(findUp.sync.isDirectory(absolute.fileLink));
+	}
+
 	t.true(findUp.sync.isDirectory(absolute.barDir));
 	t.false(findUp.sync.isDirectory(absolute.packageJson));
 	t.false(findUp.sync.isDirectory('fake'));
 });
 
 test('sync (check if path is file)', t => {
-	t.false(findUp.sync.isFile(absolute.directoryLink));
-	t.true(findUp.sync.isFile(absolute.fileLink));
+	if (isNotWindows) {
+		t.false(findUp.sync.isFile(absolute.directoryLink));
+		t.true(findUp.sync.isFile(absolute.fileLink));
+	}
+
 	t.false(findUp.sync.isFile(absolute.barDir));
 	t.true(findUp.sync.isFile(absolute.packageJson));
 	t.false(findUp.sync.isFile('fake'));
 });
 
-test('sync (check if path is symlink)', t => {
-	t.true(findUp.sync.isSymlink(absolute.directoryLink));
-	t.true(findUp.sync.isSymlink(absolute.fileLink));
-	t.false(findUp.sync.isSymlink(absolute.barDir));
-	t.false(findUp.sync.isSymlink(absolute.packageJson));
-	t.false(findUp.sync.isSymlink('fake'));
-});
+if (isNotWindows) {
+	test('sync (check if path is symlink)', t => {
+		t.true(findUp.sync.isSymlink(absolute.directoryLink));
+		t.true(findUp.sync.isSymlink(absolute.fileLink));
+		t.false(findUp.sync.isSymlink(absolute.barDir));
+		t.false(findUp.sync.isSymlink(absolute.packageJson));
+		t.false(findUp.sync.isSymlink('fake'));
+	});
+}

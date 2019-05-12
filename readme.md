@@ -52,14 +52,13 @@ const findUp = require('find-up');
 	console.log(await findUp(async directory => {
 		const hasUnicorns = await findUp.exists(path.join(directory, 'unicorn.png'));
 		return hasUnicorns && directory;
-	}));
+	}, {type: 'directory'}));
 	//=> '/Users/sindresorhus'
 })();
 ```
 
 
 ## API
-
 
 ### findUp(name, [options])
 ### findUp(matcher, [options])
@@ -91,7 +90,7 @@ Type: `Function`
 
 A function that will be called with each directory until it returns a `string` with the path, which stops the search, or the root directory has been reached and nothing was found. Useful if you want to match files with certain patterns, set of permissions, or other advanced use cases.
 
-When using async mode, the `matcher` may optionally be an async or promise-returning function that returns the path. When a `matcher` function is used, only the `cwd` option is supported.
+When using async mode, the `matcher` may optionally be an async or promise-returning function that returns the path.
 
 #### options
 
@@ -159,18 +158,19 @@ Path to the file or directory.
 
 ### findUp.stop
 
-A [Symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) that can be returned by a `matcher` function to stop the search and cause `findUp` to immediately return `undefined`. Useful as a performance optimization in case the current working directory is deeply nested in the filesystem.
+A [`Symbol`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) that can be returned by a `matcher` function to stop the search and cause `findUp` to immediately return `undefined`. Useful as a performance optimization in case the current working directory is deeply nested in the filesystem.
 
 ```js
 const path = require('path');
 const findUp = require('find-up');
 
 (async () => {
-	await findUp((directory) => {
+	await findUp(directory => {
 		return path.basename(directory) === 'work' ? findUp.stop : 'logo.png';
 	});
 })();
 ```
+
 
 ## Security
 

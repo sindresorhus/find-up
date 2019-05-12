@@ -5,15 +5,6 @@ declare const stop: unique symbol;
 declare namespace findUp {
 	interface Options extends LocatePathOptions {}
 
-	interface MatcherOptions {
-		/**
-		Directory to start from.
-
-		@default process.cwd()
-		*/
-		readonly cwd?: string;
-	}
-
 	type StopSymbol = typeof stop;
 
 	type Match = string | StopSymbol | undefined;
@@ -51,7 +42,7 @@ declare const findUp: {
 		console.log(await findUp(async directory => {
 			const hasUnicorns = await findUp.exists(path.join(directory, 'unicorn.png'));
 			return hasUnicorns && directory;
-		}));
+		}, {type: 'directory'}));
 		//=> '/Users/sindresorhus'
 	})();
 	```
@@ -64,7 +55,7 @@ declare const findUp: {
 	@param matcher - Called for each directory in the search. Return a path or `findUp.stop` to stop the search.
 	@returns The first path found or `undefined` if none could be found.
 	*/
-	(matcher: (directory: string) => (findUp.Match | Promise<findUp.Match>), options?: findUp.MatcherOptions): Promise<string | undefined>;
+	(matcher: (directory: string) => (findUp.Match | Promise<findUp.Match>), options?: findUp.Options): Promise<string | undefined>;
 
 	sync: {
 		/**
@@ -79,7 +70,7 @@ declare const findUp: {
 		@param matcher - Called for each directory in the search. Return a path or `findUp.stop` to stop the search.
 		@returns The first path found or `undefined` if none could be found.
 		*/
-		(matcher: (directory: string) => findUp.Match, options?: findUp.MatcherOptions): string | undefined;
+		(matcher: (directory: string) => findUp.Match, options?: findUp.Options): string | undefined;
 
 		/**
 		Returns if `true` the path is exists.
@@ -128,6 +119,7 @@ declare const findUp: {
 	@param path - Path to the file or directory.
 	@returns `Promise<boolean>`.
 	*/
+
 	isDirectory(path: string): Promise<boolean>;
 
 	/**

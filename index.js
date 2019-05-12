@@ -8,6 +8,7 @@ module.exports = async (name, options = {}) => {
 	let directory = path.resolve(options.cwd || '');
 	const {root} = path.parse(directory);
 	const paths = [].concat(name);
+
 	const runMatcher = async locateOptions => {
 		if (typeof name !== 'function') {
 			return locatePath(paths, locateOptions);
@@ -46,6 +47,7 @@ module.exports.sync = (name, options = {}) => {
 	let directory = path.resolve(options.cwd || '');
 	const {root} = path.parse(directory);
 	const paths = [].concat(name);
+
 	const runMatcher = locateOptions => {
 		if (typeof name !== 'function') {
 			return locatePath.sync(paths, locateOptions);

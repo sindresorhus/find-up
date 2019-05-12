@@ -50,8 +50,8 @@ const findUp = require('find-up');
 	console.log(await findUp(['rainbow.png', 'unicorn.png']));
 	//=> '/Users/sindresorhus/unicorn.png'
 
-	const pathExists = filepath => fs.promises.access(filepath).then(_ => true).catch(_ => false);
-	console.log(await findUp(async (directory) => {
+	const pathExists = filePath => fs.promises.access(filePath).then(_ => true).catch(_ => false);
+	console.log(await findUp(async directory => {
 		const hasUnicorns = await pathExists(path.join(directory, 'unicorn.png'));
 		return hasUnicorns && directory;
 	}}, {type: 'directory'});
@@ -61,7 +61,6 @@ const findUp = require('find-up');
 
 
 ## API
-
 
 ### findUp(name, [options])
 ### findUp(matcher, [options])
@@ -123,18 +122,19 @@ Allow symbolic links to match if they point to the chosen path type.
 
 ### findUp.stop
 
-A [Symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) that can be returned by a `matcher` function to stop the search and cause `findUp` to immediately return `undefined`. Useful as a performance optimization in case the current working directory is deeply nested in the filesystem.
+A [`Symbol`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) that can be returned by a `matcher` function to stop the search and cause `findUp` to immediately return `undefined`. Useful as a performance optimization in case the current working directory is deeply nested in the filesystem.
 
 ```js
 const path = require('path');
 const findUp = require('find-up');
 
 (async () => {
-	await findUp((directory) => {
+	await findUp(directory => {
 		return path.basename(directory) === 'work' ? findUp.stop : 'logo.png';
 	});
 })();
 ```
+
 
 ## Security
 

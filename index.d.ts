@@ -29,8 +29,8 @@ declare const findUp: {
 	//					└── example.js
 
 	// example.js
-	const path = require('path');
-	const findUp = require('find-up');
+	import path = require('path');
+	import findUp = require('find-up');
 
 	(async () => {
 		console.log(await findUp('unicorn.png'));
@@ -73,19 +73,19 @@ declare const findUp: {
 		(matcher: (directory: string) => findUp.Match, options?: findUp.Options): string | undefined;
 
 		/**
-		Returns `true` if the path is exists.
+		Synchronously check if a path exists.
 
 		@param path - Path to the file or directory.
-		@returns `boolean`.
+		@returns Whether the path exists.
 		*/
 		exists(path: string): boolean;
 	}
 
 	/**
-	Returns `Promise` when resolved if `true` the path is exists.
+	Check if a path exists.
 
 	@param path - Path to the file or directory.
-	@returns `Promise<boolean>`.
+	@returns Whether the path exists.
 	*/
 	exists(path: string): Promise<boolean>;
 

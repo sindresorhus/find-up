@@ -120,11 +120,11 @@ Allow symbolic links to match if they point to the chosen path type.
 
 ### findUp.exists(path)
 
-Returns `Promise` when resolved if `true` the path is exists.
+Returns a `Promise<boolean>` of whether the path exists.
 
 ### findUp.sync.exists(path)
 
-Returns `true` if the path is exists.
+Returns a `boolean` of whether the path exists.
 
 #### path
 

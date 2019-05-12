@@ -1,7 +1,6 @@
 'use strict';
 const path = require('path');
 const locatePath = require('locate-path');
-const pathType = require('path-type');
 const pathExists = require('path-exists');
 
 const stop = Symbol('findUp.stop');
@@ -85,18 +84,6 @@ module.exports.sync = (name, options = {}) => {
 
 module.exports.exists = pathExists;
 
-module.exports.isFile = pathType.isFile;
-
-module.exports.isDirectory = pathType.isDirectory;
-
-module.exports.isSymlink = pathType.isSymlink;
-
 module.exports.sync.exists = pathExists.sync;
-
-module.exports.sync.isFile = pathType.isFileSync;
-
-module.exports.sync.isDirectory = pathType.isDirectorySync;
-
-module.exports.sync.isSymlink = pathType.isSymlinkSync;
 
 module.exports.stop = stop;

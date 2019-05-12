@@ -41,8 +41,7 @@
 	],
 	"dependencies": {
 		"locate-path": "^5.0.0",
-		"path-exists": "^4.0.0",
-		"path-type": "^4.0.0"
+		"path-exists": "^4.0.0"
 	},
 	"devDependencies": {
 		"ava": "^1.4.1",

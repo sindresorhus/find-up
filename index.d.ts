@@ -73,36 +73,12 @@ declare const findUp: {
 		(matcher: (directory: string) => findUp.Match, options?: findUp.Options): string | undefined;
 
 		/**
-		Returns if `true` the path is exists.
+		Returns `true` if the path is exists.
 
 		@param path - Path to the file or directory.
 		@returns `boolean`.
 		*/
 		exists(path: string): boolean;
-
-		/**
-		Returns if `true` the path is directory
-
-		@param path - Path to the file or directory.
-		@returns `boolean`.
-		*/
-		isDirectory(path: string): boolean;
-
-		/**
-		Returns if `true` the path is file.
-
-		@param path - Path to the file or directory.
-		@returns `boolean`.
-		*/
-		isFile(path: string): boolean;
-
-		/**
-		Returns if `true` the path is symlink.
-
-		@param path - Path to the file or directory.
-		@returns `boolean`.
-		*/
-		isSymlink(path: string): boolean;
 	}
 
 	/**
@@ -114,36 +90,9 @@ declare const findUp: {
 	exists(path: string): Promise<boolean>;
 
 	/**
-	Returns `Promise` when resolved if `true` the path is directory
-
-	@param path - Path to the file or directory.
-	@returns `Promise<boolean>`.
-	*/
-
-	isDirectory(path: string): Promise<boolean>;
-
-	/**
-	Returns `Promise` when resolved if `true` the path is file.
-
-	@param path - Path to the file or directory.
-	@returns `Promise<boolean>`.
-	*/
-	isFile(path: string): Promise<boolean>;
-
-	/**
-	Returns `Promise` when resolved if `true` the path is symlink.
-
-	@param path - Path to the file or directory.
-	@returns `Promise<boolean>`.
-	*/
-	isSymlink(path: string): Promise<boolean>;
-
-	/**
 	Return this in a `matcher` function to stop the search and force `findUp` to immediately return `undefined`.
 	*/
 	readonly stop: findUp.StopSymbol;
 };
-
-
 
 export = findUp;

@@ -122,33 +122,9 @@ Allow symbolic links to match if they point to the chosen path type.
 
 Returns `Promise` when resolved if `true` the path is exists.
 
-### findUp.isDirectory(path)
-
-Returns `Promise` when resolved if `true` the path is directory.
-
-### findUp.isFile(path)
-
-Returns `Promise` when resolved if `true` the path is file.
-
-### findUp.isSymlink(path)
-
-Returns `Promise` when resolved if `true` the path is symlink.
-
-### findUp.existsSync(path)
+### findUp.sync.exists(path)
 
 Returns `true` if the path is exists.
-
-### findUp.isDirectorySync(path)
-
-Returns `true` if the path is directory.
-
-### findUp.isFileSync(path)
-
-Returns `true` if the path is file.
-
-### findUp.isSymlinkSync(path)
-
-Returns `true` if the path is symlink.
 
 #### path
 

@@ -9,12 +9,23 @@ module.exports = async (name, options = {}) => {
 	const {root} = path.parse(directory);
 	const paths = [].concat(name);
 
+	const runMatcher = async locateOptions => {
+		if (typeof name !== 'function') {
+			return locatePath(paths, locateOptions);
+		}
+
+		const foundPath = await name(locateOptions.cwd);
+		if (typeof foundPath === 'string') {
+			return locatePath([foundPath], locateOptions);
+		}
+
+		return foundPath;
+	};
+
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
 		// eslint-disable-next-line no-await-in-loop
-		const foundPath = await (typeof name === 'function' ?
-			name(directory) :
-			locatePath(paths, {...options, cwd: directory}));
+		const foundPath = await runMatcher({...options, cwd: directory});
 
 		if (foundPath === stop) {
 			return;
@@ -37,11 +48,22 @@ module.exports.sync = (name, options = {}) => {
 	const {root} = path.parse(directory);
 	const paths = [].concat(name);
 
+	const runMatcher = locateOptions => {
+		if (typeof name !== 'function') {
+			return locatePath.sync(paths, locateOptions);
+		}
+
+		const foundPath = name(locateOptions.cwd);
+		if (typeof foundPath === 'string') {
+			return locatePath.sync([foundPath], locateOptions);
+		}
+
+		return foundPath;
+	};
+
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
-		const foundPath = typeof name === 'function' ?
-			name(directory) :
-			locatePath.sync(paths, {...options, cwd: directory});
+		const foundPath = runMatcher({...options, cwd: directory});
 
 		if (foundPath === stop) {
 			return;

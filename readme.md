@@ -54,7 +54,7 @@ const findUp = require('find-up');
 	console.log(await findUp(async (directory) => {
 		const hasUnicorns = await pathExists(path.join(directory, 'unicorn.png'));
 		return hasUnicorns && directory;
-	}});
+	}}, {type: 'directory'});
 	//=> '/Users/sindresorhus'
 })();
 ```
@@ -93,7 +93,7 @@ Type: `Function`
 
 A function that will be called with each directory until it returns a `string` with the path, which stops the search, or the root directory has been reached and nothing was found. Useful if you want to match files with certain patterns, set of permissions, or other advanced use cases.
 
-When using async mode, the `matcher` may optionally be an async or promise-returning function that returns the path. When a `matcher` function is used, only the `cwd` option is supported.
+When using async mode, the `matcher` may optionally be an async or promise-returning function that returns the path.
 
 #### options
 

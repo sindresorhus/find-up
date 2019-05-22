@@ -28,12 +28,12 @@ $ npm install find-up
 ```
 /
 └── Users
-	└── sindresorhus
-		├── unicorn.png
-		└── foo
-			└── bar
-				├── baz
-				└── example.js
+    └── sindresorhus
+        ├── unicorn.png
+        └── foo
+            └── bar
+                ├── baz
+                └── example.js
 ```
 
 `example.js`

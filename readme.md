@@ -130,7 +130,7 @@ Returns a `boolean` of whether the path exists.
 
 Type: `string`
 
-Path to the file or directory.
+Path to a file or directory.
 
 ### findUp.stop
 

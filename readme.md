@@ -15,18 +15,17 @@ $ npm install find-up
 ```
 /
 └── Users
-		└── sindresorhus
-				├── unicorn.png
-				└── foo
-						└── bar
-								├── baz
-								└── example.js
+    └── sindresorhus
+        ├── unicorn.png
+        └── foo
+            └── bar
+                ├── baz
+                └── example.js
 ```
 
 `example.js`
 
 ```js
-const fs = require('fs');
 const path = require('path');
 const findUp = require('find-up');
 
@@ -37,11 +36,10 @@ const findUp = require('find-up');
 	console.log(await findUp(['rainbow.png', 'unicorn.png']));
 	//=> '/Users/sindresorhus/unicorn.png'
 
-	const pathExists = filePath => fs.promises.access(filePath).then(_ => true).catch(_ => false);
 	console.log(await findUp(async directory => {
-		const hasUnicorns = await pathExists(path.join(directory, 'unicorn.png'));
+		const hasUnicorns = await findUp.exists(path.join(directory, 'unicorn.png'));
 		return hasUnicorns && directory;
-	}}, {type: 'directory'});
+	}, {type: 'directory'}));
 	//=> '/Users/sindresorhus'
 })();
 ```
@@ -106,6 +104,20 @@ Type: `boolean`<br>
 Default: `true`
 
 Allow symbolic links to match if they point to the chosen path type.
+
+### findUp.exists(path)
+
+Returns a `Promise<boolean>` of whether the path exists.
+
+### findUp.sync.exists(path)
+
+Returns a `boolean` of whether the path exists.
+
+#### path
+
+Type: `string`
+
+Path to a file or directory.
 
 ### findUp.stop
 

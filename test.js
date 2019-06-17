@@ -50,6 +50,8 @@ test.afterEach(t => {
 	fs.rmdirSync(t.context.disjoint);
 });
 
+const isWindows = process.platform === 'win32';
+
 test('async (child file)', async t => {
 	const foundPath = await findUp(name.packageJson);
 
@@ -84,7 +86,7 @@ test('sync (explicit type file)', t => {
 	t.is(findUp.sync(name.packageJson, {type: 'directory'}), undefined);
 });
 
-if (process.platform !== 'win32') {
+if (!isWindows) {
 	test('async (symbolic links)', async t => {
 		const cwd = absolute.fixtureDirectory;
 
@@ -505,4 +507,26 @@ test('sync (matcher function stops early)', t => {
 	}), undefined);
 	t.true(visited.has(cwd));
 	t.is(visited.size, 1);
+});
+
+test('async (check if path exists)', async t => {
+	if (!isWindows) {
+		t.true(await findUp.exists(absolute.directoryLink));
+		t.true(await findUp.exists(absolute.fileLink));
+	}
+
+	t.true(await findUp.exists(absolute.barDir));
+	t.true(await findUp.exists(absolute.packageJson));
+	t.false(await findUp.exists('fake'));
+});
+
+test('sync (check if path exists)', t => {
+	if (!isWindows) {
+		t.true(findUp.sync.exists(absolute.directoryLink));
+		t.true(findUp.sync.exists(absolute.fileLink));
+	}
+
+	t.true(findUp.sync.exists(absolute.barDir));
+	t.true(findUp.sync.exists(absolute.packageJson));
+	t.false(findUp.sync.exists('fake'));
 });

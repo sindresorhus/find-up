@@ -1,6 +1,7 @@
 'use strict';
 const path = require('path');
 const locatePath = require('locate-path');
+const pathExists = require('path-exists');
 
 const stop = Symbol('findUp.stop');
 
@@ -80,5 +81,9 @@ module.exports.sync = (name, options = {}) => {
 		directory = path.dirname(directory);
 	}
 };
+
+module.exports.exists = pathExists;
+
+module.exports.sync.exists = pathExists.sync;
 
 module.exports.stop = stop;

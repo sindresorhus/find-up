@@ -29,7 +29,6 @@ declare const findUp: {
 	//                 └── example.js
 
 	// example.js
-	import path = require('path');
 	import findUp = require('find-up');
 
 	(async () => {
@@ -105,7 +104,7 @@ declare const findUp: {
 		import path = require('path');
 		import findUp = require('find-up');
 
-		console.log(findUp.sync.exists(path.join('Users', 'sindresorhus', 'unicorn.png')));
+		console.log(findUp.sync.exists(path.join('/Users', 'sindresorhus', 'unicorn.png')));
 		//=> true
 		```
 		*/
@@ -115,7 +114,7 @@ declare const findUp: {
 	/**
 	Check if a path exists.
 
-	@param path - Path to the file or directory.
+	@param path - Path to a file or directory.
 	@returns Whether the path exists.
 
 	@example
@@ -124,7 +123,7 @@ declare const findUp: {
 	import findUp = require('find-up');
 
 	(async () => {
-		console.log(await findUp.exists(path.join('Users', 'sindresorhus', 'unicorn.png')));
+		console.log(await findUp.exists(path.join('/Users', 'sindresorhus', 'unicorn.png')));
 		//=> true
 	})();
 	```

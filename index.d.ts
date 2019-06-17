@@ -101,10 +101,9 @@ declare const findUp: {
 
 		@example
 		```
-		import path = require('path');
 		import findUp = require('find-up');
 
-		console.log(findUp.sync.exists(path.join('/Users', 'sindresorhus', 'unicorn.png')));
+		console.log(findUp.sync.exists('/Users/sindresorhus/unicorn.png'));
 		//=> true
 		```
 		*/
@@ -119,11 +118,10 @@ declare const findUp: {
 
 	@example
 	```
-	import path = require('path');
 	import findUp = require('find-up');
 
 	(async () => {
-		console.log(await findUp.exists(path.join('/Users', 'sindresorhus', 'unicorn.png')));
+		console.log(await findUp.exists('/Users/sindresorhus/unicorn.png'));
 		//=> true
 	})();
 	```

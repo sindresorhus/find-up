@@ -44,7 +44,7 @@
 		"path-exists": "^4.0.0"
 	},
 	"devDependencies": {
-		"ava": "^1.4.1",
+		"ava": "^2.1.0",
 		"is-path-inside": "^2.1.0",
 		"tempy": "^0.3.0",
 		"tsd": "^0.7.3",

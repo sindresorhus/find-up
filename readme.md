@@ -47,23 +47,23 @@ const findUp = require('find-up');
 
 ## API
 
-### findUp(name, [options])
-### findUp(matcher, [options])
+### findUp(name, options?)
+### findUp(matcher, options?)
 
 Returns a `Promise` for either the path or `undefined` if it couldn't be found.
 
-### findUp([nameA, nameB], [options])
+### findUp([...name], options?)
 
-Returns a `Promise` for either the first path found (by respecting the order) or `undefined` if none could be found.
+Returns a `Promise` for either the first path found (by respecting the order of the array) or `undefined` if none could be found.
 
-### findUp.sync(name, [options])
-### findUp.sync(matcher, [options])
+### findUp.sync(name, options?)
+### findUp.sync(matcher, options?)
 
 Returns a path or `undefined` if it couldn't be found.
 
-### findUp.sync([nameA, nameB], [options])
+### findUp.sync([...name], options?)
 
-Returns the first path found (by respecting the order) or `undefined` if none could be found.
+Returns the first path found (by respecting the order of the array) or `undefined` if none could be found.
 
 #### name
 
@@ -75,7 +75,7 @@ Name of the file or directory to find.
 
 Type: `Function`
 
-A function that will be called with each directory until it returns a `string` with the path, which stops the search, or the root directory has been reached and nothing was found. Useful if you want to match files with certain patterns, set of permissions, or other advanced use cases.
+A function that will be called with each directory until it returns a `string` with the path, which stops the search, or the root directory has been reached and nothing was found. Useful if you want to match files with certain patterns, set of permissions, or other advanced use-cases.
 
 When using async mode, the `matcher` may optionally be an async or promise-returning function that returns the path.
 
@@ -93,8 +93,8 @@ Directory to start from.
 ##### type
 
 Type: `string`<br>
-Default: `file`<br>
-Values: `file` `directory`
+Default: `'file'`<br>
+Values: `'file'` `'directory'`
 
 The type of paths that can match.
 

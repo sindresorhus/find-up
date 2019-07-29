@@ -2,31 +2,43 @@
 const path = require('path');
 const locatePath = require('locate-path');
 const pathExists = require('path-exists');
+const smartCoro = require('./smart-coro');
 
 const stop = Symbol('findUp.stop');
 
-module.exports = async (name, options = {}) => {
+const runMatcher = smartCoro(function * (locateOptions) {
+	const {locate, name, paths, async} = this;
+	if (typeof name !== 'function') {
+		return locate(paths, locateOptions);
+	}
+
+	const result = name(locateOptions.cwd);
+	const foundPath = async ? yield result : result;
+	if (typeof foundPath === 'string') {
+		return locate([foundPath], locateOptions);
+	}
+
+	return foundPath;
+});
+
+const findUp = smartCoro(function * (name, options) {
+	const {async, locate} = this;
+	// SmartCoro will switch to the async state machine if the wrapped function
+	// yields a promise
+	if (async) {
+		yield Promise.resolve();
+	}
+
 	let directory = path.resolve(options.cwd || '');
 	const {root} = path.parse(directory);
 	const paths = [].concat(name);
 
-	const runMatcher = async locateOptions => {
-		if (typeof name !== 'function') {
-			return locatePath(paths, locateOptions);
-		}
-
-		const foundPath = await name(locateOptions.cwd);
-		if (typeof foundPath === 'string') {
-			return locatePath([foundPath], locateOptions);
-		}
-
-		return foundPath;
-	};
-
-	// eslint-disable-next-line no-constant-condition
 	while (true) {
-		// eslint-disable-next-line no-await-in-loop
-		const foundPath = await runMatcher({...options, cwd: directory});
+		const result = runMatcher.call(
+			{locate, name, paths, async},
+			{...options, cwd: directory}
+		);
+		const foundPath = async ? yield result : result;
 
 		if (foundPath === stop) {
 			return;
@@ -42,48 +54,25 @@ module.exports = async (name, options = {}) => {
 
 		directory = path.dirname(directory);
 	}
-};
+});
 
-module.exports.sync = (name, options = {}) => {
-	let directory = path.resolve(options.cwd || '');
-	const {root} = path.parse(directory);
-	const paths = [].concat(name);
-
-	const runMatcher = locateOptions => {
-		if (typeof name !== 'function') {
-			return locatePath.sync(paths, locateOptions);
-		}
-
-		const foundPath = name(locateOptions.cwd);
-		if (typeof foundPath === 'string') {
-			return locatePath.sync([foundPath], locateOptions);
-		}
-
-		return foundPath;
-	};
-
-	// eslint-disable-next-line no-constant-condition
-	while (true) {
-		const foundPath = runMatcher({...options, cwd: directory});
-
-		if (foundPath === stop) {
-			return;
-		}
-
-		if (foundPath) {
-			return path.resolve(directory, foundPath);
-		}
-
-		if (directory === root) {
-			return;
-		}
-
-		directory = path.dirname(directory);
+module.exports = Object.assign(
+	(name, options = {}) => findUp.call({
+		async: true,
+		locate: locatePath
+	}, name, options),
+	{
+		exists: pathExists,
+		stop
 	}
-};
+);
 
-module.exports.exists = pathExists;
-
-module.exports.sync.exists = pathExists.sync;
-
-module.exports.stop = stop;
+module.exports.sync = Object.assign(
+	(name, options = {}) => findUp.call({
+		async: false,
+		locate: locatePath.sync
+	}, name, options),
+	{
+		exists: pathExists.sync
+	}
+);

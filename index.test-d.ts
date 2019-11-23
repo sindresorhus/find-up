@@ -74,4 +74,5 @@ expectType<string | undefined>(findUp.sync((): findUp.StopSymbol => findUp.stop,
 expectType<Promise<boolean>>(findUp.exists('unicorn.png'));
 expectType<boolean>(findUp.sync.exists('unicorn.png'));
 
-expectType<Symbol>(findUp.stop);
+declare const expectSymbol: <T extends Symbol>(value: T) => void;
+expectSymbol<findUp.StopSymbol>(findUp.stop);

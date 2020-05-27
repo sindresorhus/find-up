@@ -4,10 +4,11 @@
 	"description": "Find a file or directory by walking up parent directories",
 	"license": "MIT",
 	"repository": "sindresorhus/find-up",
+	"funding": "https://github.com/sponsors/sindresorhus",
 	"author": {
 		"name": "Sindre Sorhus",
 		"email": "sindresorhus@gmail.com",
-		"url": "sindresorhus.com"
+		"url": "https://sindresorhus.com"
 	},
 	"engines": {
 		"node": ">=8"
@@ -47,7 +48,7 @@
 		"ava": "^2.1.0",
 		"is-path-inside": "^2.1.0",
 		"tempy": "^0.3.0",
-		"tsd": "^0.7.3",
+		"tsd": "^0.11.0",
 		"xo": "^0.24.0"
 	}
 }

@@ -42,8 +42,8 @@ absolute.directoryLink = path.join(absolute.fixtureDirectory, name.directoryLink
 
 // Create a disjoint directory, used for the not-found tests
 test.beforeEach(t => {
-	const tmpDir = tempy.directory();
-	t.context.disjoint = tmpDir;
+	const temporaryDirectory = tempy.directory();
+	t.context.disjoint = temporaryDirectory;
 });
 
 test.afterEach(t => {

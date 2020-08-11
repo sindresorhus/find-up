@@ -9,7 +9,7 @@ expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png'], {
 expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png'], {allowSymlinks: false}));
 expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png'], {type: 'file'}));
 expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png'], {type: 'directory'}));
-expectError(findUp(['rainbow.png', 'unicorn.png'], {concurrency: 1}))
+expectError(findUp(['rainbow.png', 'unicorn.png'], {concurrency: 1}));
 
 expectType<Promise<string | undefined>>(findUp(() => 'unicorn.png'));
 expectType<Promise<string | undefined>>(findUp(() => 'unicorn.png', {cwd: ''}));

@@ -11,7 +11,7 @@
 		"url": "https://sindresorhus.com"
 	},
 	"engines": {
-		"node": ">=8"
+		"node": ">=10"
 	},
 	"scripts": {
 		"test": "xo && ava && tsd"
@@ -41,14 +41,14 @@
 		"path"
 	],
 	"dependencies": {
-		"locate-path": "^5.0.0",
+		"locate-path": "^6.0.0",
 		"path-exists": "^4.0.0"
 	},
 	"devDependencies": {
 		"ava": "^2.1.0",
 		"is-path-inside": "^2.1.0",
-		"tempy": "^0.3.0",
-		"tsd": "^0.11.0",
-		"xo": "^0.24.0"
+		"tempy": "^0.6.0",
+		"tsd": "^0.13.1",
+		"xo": "^0.33.0"
 	}
 }

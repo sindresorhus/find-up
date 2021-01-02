@@ -1,4 +1,4 @@
-# find-up [![Build Status](https://travis-ci.com/sindresorhus/find-up.svg?branch=master)](https://travis-ci.com/github/sindresorhus/find-up)
+# find-up
 
 > Find a file or directory by walking up parent directories
 

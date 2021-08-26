@@ -1,5 +1,5 @@
 import {expectType, expectError} from 'tsd';
-import findUp = require('.');
+import {findUp, findUpSync, findUpStop, pathExists, pathExistsSync} from './index.js';
 
 expectType<Promise<string | undefined>>(findUp('unicorn.png'));
 expectType<Promise<string | undefined>>(findUp('unicorn.png', {cwd: ''}));
@@ -23,8 +23,8 @@ expectType<Promise<string | undefined>>(findUp(() => undefined, {allowSymlinks: 
 expectType<Promise<string | undefined>>(findUp(() => undefined, {allowSymlinks: false}));
 expectType<Promise<string | undefined>>(findUp(() => undefined, {type: 'file'}));
 expectType<Promise<string | undefined>>(findUp(() => undefined, {type: 'directory'}));
-expectType<Promise<string | undefined>>(findUp((): findUp.StopSymbol => findUp.stop));
-expectType<Promise<string | undefined>>(findUp((): findUp.StopSymbol => findUp.stop, {cwd: ''}));
+expectType<Promise<string | undefined>>(findUp((): typeof findUpStop => findUpStop));
+expectType<Promise<string | undefined>>(findUp((): typeof findUpStop => findUpStop, {cwd: ''}));
 expectType<Promise<string | undefined>>(findUp(async () => 'unicorn.png'));
 expectType<Promise<string | undefined>>(findUp(async () => 'unicorn.png', {cwd: ''}));
 expectType<Promise<string | undefined>>(findUp(async () => 'unicorn.png', {allowSymlinks: true}));
@@ -38,40 +38,38 @@ expectType<Promise<string | undefined>>(findUp(async () => undefined, {allowSyml
 expectType<Promise<string | undefined>>(findUp(async () => undefined, {type: 'file'}));
 expectType<Promise<string | undefined>>(findUp(async () => undefined, {type: 'directory'}));
 
-expectType<Promise<string | undefined>>(findUp(async (): Promise<findUp.StopSymbol> => findUp.stop));
-expectType<Promise<string | undefined>>(findUp(async (): Promise<findUp.StopSymbol> => findUp.stop, {cwd: ''}));
-expectType<Promise<string | undefined>>(findUp(async (): Promise<findUp.StopSymbol> => findUp.stop, {allowSymlinks: true}));
-expectType<Promise<string | undefined>>(findUp(async (): Promise<findUp.StopSymbol> => findUp.stop, {allowSymlinks: false}));
-expectType<Promise<string | undefined>>(findUp(async (): Promise<findUp.StopSymbol> => findUp.stop, {type: 'file'}));
-expectType<Promise<string | undefined>>(findUp(async (): Promise<findUp.StopSymbol> => findUp.stop, {type: 'directory'}));
+expectType<Promise<string | undefined>>(findUp(async (): Promise<typeof findUpStop> => findUpStop));
+expectType<Promise<string | undefined>>(findUp(async (): Promise<typeof findUpStop> => findUpStop, {cwd: ''}));
+expectType<Promise<string | undefined>>(findUp(async (): Promise<typeof findUpStop> => findUpStop, {allowSymlinks: true}));
+expectType<Promise<string | undefined>>(findUp(async (): Promise<typeof findUpStop> => findUpStop, {allowSymlinks: false}));
+expectType<Promise<string | undefined>>(findUp(async (): Promise<typeof findUpStop> => findUpStop, {type: 'file'}));
+expectType<Promise<string | undefined>>(findUp(async (): Promise<typeof findUpStop> => findUpStop, {type: 'directory'}));
 
-expectType<string | undefined>(findUp.sync('unicorn.png'));
-expectType<string | undefined>(findUp.sync('unicorn.png', {cwd: ''}));
-expectType<string | undefined>(findUp.sync(['rainbow.png', 'unicorn.png']));
-expectType<string | undefined>(findUp.sync(['rainbow.png', 'unicorn.png'], {cwd: ''}));
-expectType<string | undefined>(findUp.sync(['rainbow.png', 'unicorn.png'], {allowSymlinks: true}));
-expectType<string | undefined>(findUp.sync(['rainbow.png', 'unicorn.png'], {allowSymlinks: false}));
-expectType<string | undefined>(findUp.sync(['rainbow.png', 'unicorn.png'], {type: 'file'}));
-expectType<string | undefined>(findUp.sync(['rainbow.png', 'unicorn.png'], {type: 'directory'}));
+expectType<string | undefined>(findUpSync('unicorn.png'));
+expectType<string | undefined>(findUpSync('unicorn.png', {cwd: ''}));
+expectType<string | undefined>(findUpSync(['rainbow.png', 'unicorn.png']));
+expectType<string | undefined>(findUpSync(['rainbow.png', 'unicorn.png'], {cwd: ''}));
+expectType<string | undefined>(findUpSync(['rainbow.png', 'unicorn.png'], {allowSymlinks: true}));
+expectType<string | undefined>(findUpSync(['rainbow.png', 'unicorn.png'], {allowSymlinks: false}));
+expectType<string | undefined>(findUpSync(['rainbow.png', 'unicorn.png'], {type: 'file'}));
+expectType<string | undefined>(findUpSync(['rainbow.png', 'unicorn.png'], {type: 'directory'}));
 
-expectType<string | undefined>(findUp.sync(() => 'unicorn.png'));
-expectType<string | undefined>(findUp.sync(() => 'unicorn.png', {cwd: ''}));
-expectType<string | undefined>(findUp.sync(() => 'unicorn.png', {allowSymlinks: true}));
-expectType<string | undefined>(findUp.sync(() => 'unicorn.png', {allowSymlinks: false}));
-expectType<string | undefined>(findUp.sync(() => 'unicorn.png', {type: 'file'}));
-expectType<string | undefined>(findUp.sync(() => 'unicorn.png', {type: 'directory'}));
-expectType<string | undefined>(findUp.sync(() => undefined));
-expectType<string | undefined>(findUp.sync(() => undefined, {cwd: ''}));
-expectType<string | undefined>(findUp.sync(() => undefined, {allowSymlinks: true}));
-expectType<string | undefined>(findUp.sync(() => undefined, {allowSymlinks: false}));
-expectType<string | undefined>(findUp.sync(() => undefined, {type: 'file'}));
-expectType<string | undefined>(findUp.sync(() => undefined, {type: 'directory'}));
-expectType<string | undefined>(findUp.sync((): findUp.StopSymbol => findUp.stop));
-expectType<string | undefined>(findUp.sync((): findUp.StopSymbol => findUp.stop, {cwd: ''}));
-expectType<string | undefined>(findUp.sync((): findUp.StopSymbol => findUp.stop, {type: 'file'}));
-expectType<string | undefined>(findUp.sync((): findUp.StopSymbol => findUp.stop, {type: 'directory'}));
+expectType<string | undefined>(findUpSync(() => 'unicorn.png'));
+expectType<string | undefined>(findUpSync(() => 'unicorn.png', {cwd: ''}));
+expectType<string | undefined>(findUpSync(() => 'unicorn.png', {allowSymlinks: true}));
+expectType<string | undefined>(findUpSync(() => 'unicorn.png', {allowSymlinks: false}));
+expectType<string | undefined>(findUpSync(() => 'unicorn.png', {type: 'file'}));
+expectType<string | undefined>(findUpSync(() => 'unicorn.png', {type: 'directory'}));
+expectType<string | undefined>(findUpSync(() => undefined));
+expectType<string | undefined>(findUpSync(() => undefined, {cwd: ''}));
+expectType<string | undefined>(findUpSync(() => undefined, {allowSymlinks: true}));
+expectType<string | undefined>(findUpSync(() => undefined, {allowSymlinks: false}));
+expectType<string | undefined>(findUpSync(() => undefined, {type: 'file'}));
+expectType<string | undefined>(findUpSync(() => undefined, {type: 'directory'}));
+expectType<string | undefined>(findUpSync((): typeof findUpStop => findUpStop));
+expectType<string | undefined>(findUpSync((): typeof findUpStop => findUpStop, {cwd: ''}));
+expectType<string | undefined>(findUpSync((): typeof findUpStop => findUpStop, {type: 'file'}));
+expectType<string | undefined>(findUpSync((): typeof findUpStop => findUpStop, {type: 'directory'}));
 
-expectType<Promise<boolean>>(findUp.exists('unicorn.png'));
-expectType<boolean>(findUp.sync.exists('unicorn.png'));
-
-expectType<findUp.StopSymbol>(findUp.stop);
+expectType<Promise<boolean>>(pathExists('unicorn.png'));
+expectType<boolean>(pathExistsSync('unicorn.png'));

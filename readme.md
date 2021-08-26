@@ -24,22 +24,20 @@ $ npm install find-up
 `example.js`
 
 ```js
-const path = require('path');
-const findUp = require('find-up');
+import path from 'node:path';
+import {findUp, pathExists} from 'find-up';
 
-(async () => {
-	console.log(await findUp('unicorn.png'));
-	//=> '/Users/sindresorhus/unicorn.png'
+console.log(await findUp('unicorn.png'));
+//=> '/Users/sindresorhus/unicorn.png'
 
-	console.log(await findUp(['rainbow.png', 'unicorn.png']));
-	//=> '/Users/sindresorhus/unicorn.png'
+console.log(await findUp(['rainbow.png', 'unicorn.png']));
+//=> '/Users/sindresorhus/unicorn.png'
 
-	console.log(await findUp(async directory => {
-		const hasUnicorns = await findUp.exists(path.join(directory, 'unicorn.png'));
-		return hasUnicorns && directory;
-	}, {type: 'directory'}));
-	//=> '/Users/sindresorhus'
-})();
+console.log(await findUp(async directory => {
+	const hasUnicorns = await pathExists(path.join(directory, 'unicorn.png'));
+	return hasUnicorns && directory;
+}, {type: 'directory'}));
+//=> '/Users/sindresorhus'
 ```
 
 ## API
@@ -53,12 +51,12 @@ Returns a `Promise` for either the path or `undefined` if it couldn't be found.
 
 Returns a `Promise` for either the first path found (by respecting the order of the array) or `undefined` if none could be found.
 
-### findUp.sync(name, options?)
-### findUp.sync(matcher, options?)
+### findUpSync(name, options?)
+### findUpSync(matcher, options?)
 
 Returns a path or `undefined` if it couldn't be found.
 
-### findUp.sync([...name], options?)
+### findUpSync([...name], options?)
 
 Returns the first path found (by respecting the order of the array) or `undefined` if none could be found.
 
@@ -66,7 +64,7 @@ Returns the first path found (by respecting the order of the array) or `undefine
 
 Type: `string`
 
-Name of the file or directory to find.
+The name of the file or directory to find.
 
 #### matcher
 
@@ -85,7 +83,7 @@ Type: `object`
 Type: `string`\
 Default: `process.cwd()`
 
-Directory to start from.
+The directory to start from.
 
 ##### type
 
@@ -102,11 +100,11 @@ Default: `true`
 
 Allow symbolic links to match if they point to the chosen path type.
 
-### findUp.exists(path)
+### pathExists(path)
 
 Returns a `Promise<boolean>` of whether the path exists.
 
-### findUp.sync.exists(path)
+### pathExistsSync(path)
 
 Returns a `boolean` of whether the path exists.
 
@@ -114,21 +112,19 @@ Returns a `boolean` of whether the path exists.
 
 Type: `string`
 
-Path to a file or directory.
+The path to a file or directory.
 
-### findUp.stop
+### findUpStop
 
 A [`Symbol`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) that can be returned by a `matcher` function to stop the search and cause `findUp` to immediately return `undefined`. Useful as a performance optimization in case the current working directory is deeply nested in the filesystem.
 
 ```js
-const path = require('path');
-const findUp = require('find-up');
+import path from 'node:path';
+import {findUp, findUpStop} from 'find-up';
 
-(async () => {
-	await findUp(directory => {
-		return path.basename(directory) === 'work' ? findUp.stop : 'logo.png';
-	});
-})();
+await findUp(directory => {
+	return path.basename(directory) === 'work' ? findUpStop : 'logo.png';
+});
 ```
 
 ## Related

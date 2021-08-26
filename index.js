@@ -1,14 +1,12 @@
-'use strict';
-const path = require('path');
-const locatePath = require('locate-path');
-const pathExists = require('path-exists');
+import path from 'node:path';
+import {locatePath, locatePathSync} from 'locate-path';
 
-const stop = Symbol('findUp.stop');
+export const findUpStop = Symbol('findUpStop');
 
-module.exports = async (name, options = {}) => {
+export async function findUp(name, options = {}) {
 	let directory = path.resolve(options.cwd || '');
 	const {root} = path.parse(directory);
-	const paths = [].concat(name);
+	const paths = [name].flat();
 
 	const runMatcher = async locateOptions => {
 		if (typeof name !== 'function') {
@@ -28,7 +26,7 @@ module.exports = async (name, options = {}) => {
 		// eslint-disable-next-line no-await-in-loop
 		const foundPath = await runMatcher({...options, cwd: directory});
 
-		if (foundPath === stop) {
+		if (foundPath === findUpStop) {
 			return;
 		}
 
@@ -42,21 +40,21 @@ module.exports = async (name, options = {}) => {
 
 		directory = path.dirname(directory);
 	}
-};
+}
 
-module.exports.sync = (name, options = {}) => {
+export function findUpSync(name, options = {}) {
 	let directory = path.resolve(options.cwd || '');
 	const {root} = path.parse(directory);
-	const paths = [].concat(name);
+	const paths = [name].flat();
 
 	const runMatcher = locateOptions => {
 		if (typeof name !== 'function') {
-			return locatePath.sync(paths, locateOptions);
+			return locatePathSync(paths, locateOptions);
 		}
 
 		const foundPath = name(locateOptions.cwd);
 		if (typeof foundPath === 'string') {
-			return locatePath.sync([foundPath], locateOptions);
+			return locatePathSync([foundPath], locateOptions);
 		}
 
 		return foundPath;
@@ -66,7 +64,7 @@ module.exports.sync = (name, options = {}) => {
 	while (true) {
 		const foundPath = runMatcher({...options, cwd: directory});
 
-		if (foundPath === stop) {
+		if (foundPath === findUpStop) {
 			return;
 		}
 
@@ -80,10 +78,9 @@ module.exports.sync = (name, options = {}) => {
 
 		directory = path.dirname(directory);
 	}
-};
+}
 
-module.exports.exists = pathExists;
-
-module.exports.sync.exists = pathExists.sync;
-
-module.exports.stop = stop;
+export {
+	pathExists,
+	pathExistsSync,
+} from 'path-exists';

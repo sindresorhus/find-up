@@ -105,7 +105,7 @@ Allow symbolic links to match if they point to the chosen path type.
 Type: `string`\
 Default: `path.parse(cwd).root`
 
-The absolute path to the directory to stop the search before reaching root if there were no matches before the `stopAt` directory.
+The path to the directory to stop the search before reaching root if there were no matches before the `stopAt` directory.
 
 ### pathExists(path)
 

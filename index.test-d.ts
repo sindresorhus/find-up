@@ -9,6 +9,7 @@ expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png'], {
 expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png'], {allowSymlinks: false}));
 expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png'], {type: 'file'}));
 expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png'], {type: 'directory'}));
+expectType<Promise<string | undefined>>(findUp(['rainbow.png', 'unicorn.png'], {stopAt: 'foo'}));
 expectError(findUp(['rainbow.png', 'unicorn.png'], {concurrency: 1}));
 
 expectType<Promise<string | undefined>>(findUp(() => 'unicorn.png'));
@@ -17,26 +18,31 @@ expectType<Promise<string | undefined>>(findUp(() => 'unicorn.png', {allowSymlin
 expectType<Promise<string | undefined>>(findUp(() => 'unicorn.png', {allowSymlinks: false}));
 expectType<Promise<string | undefined>>(findUp(() => 'unicorn.png', {type: 'file'}));
 expectType<Promise<string | undefined>>(findUp(() => 'unicorn.png', {type: 'directory'}));
+expectType<Promise<string | undefined>>(findUp(() => 'unicorn.png', {stopAt: 'foo'}));
 expectType<Promise<string | undefined>>(findUp(() => undefined));
 expectType<Promise<string | undefined>>(findUp(() => undefined, {cwd: ''}));
 expectType<Promise<string | undefined>>(findUp(() => undefined, {allowSymlinks: true}));
 expectType<Promise<string | undefined>>(findUp(() => undefined, {allowSymlinks: false}));
 expectType<Promise<string | undefined>>(findUp(() => undefined, {type: 'file'}));
 expectType<Promise<string | undefined>>(findUp(() => undefined, {type: 'directory'}));
+expectType<Promise<string | undefined>>(findUp(() => undefined, {stopAt: 'foo'}));
 expectType<Promise<string | undefined>>(findUp((): typeof findUpStop => findUpStop));
 expectType<Promise<string | undefined>>(findUp((): typeof findUpStop => findUpStop, {cwd: ''}));
+expectType<Promise<string | undefined>>(findUp((): typeof findUpStop => findUpStop, {stopAt: 'foo'}));
 expectType<Promise<string | undefined>>(findUp(async () => 'unicorn.png'));
 expectType<Promise<string | undefined>>(findUp(async () => 'unicorn.png', {cwd: ''}));
 expectType<Promise<string | undefined>>(findUp(async () => 'unicorn.png', {allowSymlinks: true}));
 expectType<Promise<string | undefined>>(findUp(async () => 'unicorn.png', {allowSymlinks: false}));
 expectType<Promise<string | undefined>>(findUp(async () => 'unicorn.png', {type: 'file'}));
 expectType<Promise<string | undefined>>(findUp(async () => 'unicorn.png', {type: 'directory'}));
+expectType<Promise<string | undefined>>(findUp(async () => 'unicorn.png', {stopAt: 'foo'}));
 expectType<Promise<string | undefined>>(findUp(async () => undefined));
 expectType<Promise<string | undefined>>(findUp(async () => undefined, {cwd: ''}));
 expectType<Promise<string | undefined>>(findUp(async () => undefined, {allowSymlinks: true}));
 expectType<Promise<string | undefined>>(findUp(async () => undefined, {allowSymlinks: false}));
 expectType<Promise<string | undefined>>(findUp(async () => undefined, {type: 'file'}));
 expectType<Promise<string | undefined>>(findUp(async () => undefined, {type: 'directory'}));
+expectType<Promise<string | undefined>>(findUp(async () => undefined, {stopAt: 'foo'}));
 
 expectType<Promise<string | undefined>>(findUp(async (): Promise<typeof findUpStop> => findUpStop));
 expectType<Promise<string | undefined>>(findUp(async (): Promise<typeof findUpStop> => findUpStop, {cwd: ''}));
@@ -44,6 +50,7 @@ expectType<Promise<string | undefined>>(findUp(async (): Promise<typeof findUpSt
 expectType<Promise<string | undefined>>(findUp(async (): Promise<typeof findUpStop> => findUpStop, {allowSymlinks: false}));
 expectType<Promise<string | undefined>>(findUp(async (): Promise<typeof findUpStop> => findUpStop, {type: 'file'}));
 expectType<Promise<string | undefined>>(findUp(async (): Promise<typeof findUpStop> => findUpStop, {type: 'directory'}));
+expectType<Promise<string | undefined>>(findUp(async (): Promise<typeof findUpStop> => findUpStop, {stopAt: 'foo'}));
 
 expectType<string | undefined>(findUpSync('unicorn.png'));
 expectType<string | undefined>(findUpSync('unicorn.png', {cwd: ''}));
@@ -53,6 +60,7 @@ expectType<string | undefined>(findUpSync(['rainbow.png', 'unicorn.png'], {allow
 expectType<string | undefined>(findUpSync(['rainbow.png', 'unicorn.png'], {allowSymlinks: false}));
 expectType<string | undefined>(findUpSync(['rainbow.png', 'unicorn.png'], {type: 'file'}));
 expectType<string | undefined>(findUpSync(['rainbow.png', 'unicorn.png'], {type: 'directory'}));
+expectType<string | undefined>(findUpSync(['rainbow.png', 'unicorn.png'], {stopAt: 'foo'}));
 
 expectType<string | undefined>(findUpSync(() => 'unicorn.png'));
 expectType<string | undefined>(findUpSync(() => 'unicorn.png', {cwd: ''}));
@@ -60,16 +68,19 @@ expectType<string | undefined>(findUpSync(() => 'unicorn.png', {allowSymlinks: t
 expectType<string | undefined>(findUpSync(() => 'unicorn.png', {allowSymlinks: false}));
 expectType<string | undefined>(findUpSync(() => 'unicorn.png', {type: 'file'}));
 expectType<string | undefined>(findUpSync(() => 'unicorn.png', {type: 'directory'}));
+expectType<string | undefined>(findUpSync(() => 'unicorn.png', {stopAt: 'foo'}));
 expectType<string | undefined>(findUpSync(() => undefined));
 expectType<string | undefined>(findUpSync(() => undefined, {cwd: ''}));
 expectType<string | undefined>(findUpSync(() => undefined, {allowSymlinks: true}));
 expectType<string | undefined>(findUpSync(() => undefined, {allowSymlinks: false}));
 expectType<string | undefined>(findUpSync(() => undefined, {type: 'file'}));
 expectType<string | undefined>(findUpSync(() => undefined, {type: 'directory'}));
+expectType<string | undefined>(findUpSync(() => undefined, {stopAt: 'foo'}));
 expectType<string | undefined>(findUpSync((): typeof findUpStop => findUpStop));
 expectType<string | undefined>(findUpSync((): typeof findUpStop => findUpStop, {cwd: ''}));
 expectType<string | undefined>(findUpSync((): typeof findUpStop => findUpStop, {type: 'file'}));
 expectType<string | undefined>(findUpSync((): typeof findUpStop => findUpStop, {type: 'directory'}));
+expectType<string | undefined>(findUpSync((): typeof findUpStop => findUpStop, {stopAt: 'foo'}));
 
 expectType<Promise<boolean>>(pathExists('unicorn.png'));
 expectType<boolean>(pathExistsSync('unicorn.png'));

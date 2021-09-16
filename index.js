@@ -6,6 +6,7 @@ export const findUpStop = Symbol('findUpStop');
 export async function findUp(name, options = {}) {
 	let directory = path.resolve(options.cwd || '');
 	const {root} = path.parse(directory);
+	const stopAt = options.stopAt || root;
 	const paths = [name].flat();
 
 	const runMatcher = async locateOptions => {
@@ -34,7 +35,7 @@ export async function findUp(name, options = {}) {
 			return path.resolve(directory, foundPath);
 		}
 
-		if (directory === root) {
+		if (directory === stopAt) {
 			return;
 		}
 
@@ -45,6 +46,7 @@ export async function findUp(name, options = {}) {
 export function findUpSync(name, options = {}) {
 	let directory = path.resolve(options.cwd || '');
 	const {root} = path.parse(directory);
+	const stopAt = options.stopAt || root;
 	const paths = [name].flat();
 
 	const runMatcher = locateOptions => {
@@ -72,7 +74,7 @@ export function findUpSync(name, options = {}) {
 			return path.resolve(directory, foundPath);
 		}
 
-		if (directory === root) {
+		if (directory === stopAt) {
 			return;
 		}
 

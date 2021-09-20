@@ -8,7 +8,14 @@ export const findUpStop: unique symbol;
 
 export type Match = string | typeof findUpStop | undefined;
 
-export type Options = LocatePathOptions & {stopAt?: string};
+export interface Options extends LocatePathOptions {
+	/**
+	The path to the directory to stop the search before reaching root if there were no matches before the `stopAt` directory.
+
+	@default path.parse(cwd).root
+	*/
+	readonly stopAt?: string;
+}
 
 /**
 Find a file or directory by walking up parent directories.

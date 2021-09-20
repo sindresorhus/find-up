@@ -229,6 +229,24 @@ test('sync (cousin file, custom cwd with stopAt)', t => {
 	t.is(foundPath, undefined);
 });
 
+test('async (cousin file, custom cwd, stopAt equal to foundPath)', async t => {
+	const foundPath = await findUp(name.baz, {
+		cwd: relative.barDir,
+		stopAt: absolute.baz,
+	});
+
+	t.is(foundPath, absolute.baz);
+});
+
+test('sync (cousin file, custom cwd, stopAt equal to foundPath)', t => {
+	const foundPath = findUpSync(name.baz, {
+		cwd: relative.barDir,
+		stopAt: absolute.baz,
+	});
+
+	t.is(foundPath, absolute.baz);
+});
+
 test('async (nested descendant file)', async t => {
 	const foundPath = await findUp(relative.baz);
 

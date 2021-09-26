@@ -100,6 +100,13 @@ Default: `true`
 
 Allow symbolic links to match if they point to the chosen path type.
 
+##### stopAt
+
+Type: `string`\
+Default: `path.parse(cwd).root`
+
+The path to the directory to stop the search before reaching root if there were no matches before the `stopAt` directory.
+
 ### pathExists(path)
 
 Returns a `Promise<boolean>` of whether the path exists.

@@ -40,6 +40,7 @@ absolute.fixtureDirectory = path.join(
 );
 absolute.baz = path.join(absolute.fixtureDirectory, name.baz);
 absolute.qux = path.join(absolute.fixtureDirectory, name.qux);
+absolute.fooDir = path.join(absolute.fixtureDirectory, 'foo');
 absolute.barDir = path.join(absolute.fixtureDirectory, 'foo', 'bar');
 absolute.fileLink = path.join(absolute.fixtureDirectory, name.fileLink);
 absolute.directoryLink = path.join(absolute.fixtureDirectory, name.directoryLink);
@@ -205,6 +206,42 @@ test('async (cousin file, custom cwd)', async t => {
 test('sync (cousin file, custom cwd)', t => {
 	const foundPath = findUpSync(name.baz, {
 		cwd: relative.barDir,
+	});
+
+	t.is(foundPath, absolute.baz);
+});
+
+test('async (cousin file, custom cwd with stopAt)', async t => {
+	const foundPath = await findUp(name.baz, {
+		cwd: relative.barDir,
+		stopAt: absolute.fooDir,
+	});
+
+	t.is(foundPath, undefined);
+});
+
+test('sync (cousin file, custom cwd with stopAt)', t => {
+	const foundPath = findUpSync(name.baz, {
+		cwd: relative.barDir,
+		stopAt: absolute.fooDir,
+	});
+
+	t.is(foundPath, undefined);
+});
+
+test('async (cousin file, custom cwd, stopAt equal to foundPath)', async t => {
+	const foundPath = await findUp(name.baz, {
+		cwd: relative.barDir,
+		stopAt: absolute.baz,
+	});
+
+	t.is(foundPath, absolute.baz);
+});
+
+test('sync (cousin file, custom cwd, stopAt equal to foundPath)', t => {
+	const foundPath = findUpSync(name.baz, {
+		cwd: relative.barDir,
+		stopAt: absolute.baz,
 	});
 
 	t.is(foundPath, absolute.baz);

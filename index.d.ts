@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unified-signatures */
-import {Options} from 'locate-path';
+import {Options as LocatePathOptions} from 'locate-path';
 
 /**
 Return this in a `matcher` function to stop the search and force `findUp` to immediately return `undefined`.
@@ -7,6 +7,15 @@ Return this in a `matcher` function to stop the search and force `findUp` to imm
 export const findUpStop: unique symbol;
 
 export type Match = string | typeof findUpStop | undefined;
+
+export interface Options extends LocatePathOptions {
+	/**
+	The path to the directory to stop the search before reaching root if there were no matches before the `stopAt` directory.
+
+	@default path.parse(cwd).root
+	*/
+	readonly stopAt?: string;
+}
 
 /**
 Find a file or directory by walking up parent directories.
@@ -137,5 +146,3 @@ console.log(pathExistsSync('/Users/sindresorhus/unicorn.png'));
 ```
 */
 export function pathExistsSync(path: string): boolean;
-
-export {Options} from 'locate-path';

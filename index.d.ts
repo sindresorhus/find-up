@@ -116,6 +116,106 @@ console.log(findUpSync(directory => {
 export function findUpSync(matcher: (directory: string) => Match, options?: Options): string | undefined;
 
 /**
+Find files or directories by walking up parent directories.
+
+@param name - The name of the file or directory to find. Can be multiple.
+@returns All paths found (by respecting the order of `name`s) or `undefined` if none could be found.
+
+@example
+```
+// /
+// └── Users
+//     └── sindresorhus
+//         ├── unicorn.png
+//         └── foo
+//             ├── unicorn.png
+//             └── bar
+//                 ├── baz
+//                 └── example.js
+
+// example.js
+import {findUpMultiple} from 'find-up';
+
+console.log(await findUpMultiple('unicorn.png'));
+//=> ['/Users/sindresorhus/foo/unicorn.png', '/Users/sindresorhus/unicorn.png']
+
+console.log(await findUpMultiple(['rainbow.png', 'unicorn.png']));
+//=> ['/Users/sindresorhus/foo/unicorn.png', '/Users/sindresorhus/unicorn.png']
+```
+*/
+export function findUpMultiple(name: string | readonly string[], options?: Options): Promise<string[] | undefined>;
+
+/**
+Find files or directories by walking up parent directories.
+
+@param matcher - Called for each directory in the search. Return a path or `findUpStop` to stop the search.
+@returns All paths found or `undefined` if none could be found.
+
+@example
+```
+import path from 'node:path';
+import {findUpMultiple, pathExists} from 'find-up';
+
+console.log(await findUpMultiple(async directory => {
+  const hasUnicorns = await pathExists(path.join(directory, 'unicorn.png'));
+  return hasUnicorns && directory;
+}, {type: 'directory'}));
+//=> ['/Users/sindresorhus/foo', '/Users/sindresorhus']
+```
+*/
+export function findUpMultiple(matcher: (directory: string) => (Match | Promise<Match>), options?: Options): Promise<string[] | undefined>;
+
+/**
+Synchronously find files or directories by walking up parent directories.
+
+@param name - The name of the file or directory to find. Can be multiple.
+@returns All paths found (by respecting the order of `name`s) or `undefined` if none could be found.
+
+@example
+```
+// /
+// └── Users
+//     └── sindresorhus
+//         ├── unicorn.png
+//         └── foo
+//             ├── unicorn.png
+//             └── bar
+//                 ├── baz
+//                 └── example.js
+
+// example.js
+import {findUpMultipleSync} from 'find-up';
+
+console.log(findUpMultipleSync('unicorn.png'));
+//=> ['/Users/sindresorhus/foo/unicorn.png', '/Users/sindresorhus/unicorn.png']
+
+console.log(findUpMultipleSync(['rainbow.png', 'unicorn.png']));
+//=> ['/Users/sindresorhus/foo/unicorn.png', '/Users/sindresorhus/unicorn.png']
+```
+*/
+export function findUpMultipleSync(name: string | readonly string[], options?: Options): string[] | undefined;
+
+/**
+Synchronously find files or directories by walking up parent directories.
+
+@param matcher - Called for each directory in the search. Return a path or `findUpStop` to stop the search.
+@returns All paths found or `undefined` if none could be found.
+
+@example
+```
+import path from 'node:path';
+import {findUpMultipleSync, pathExistsSync} from 'find-up';
+
+console.log(findUpMultipleSync(directory => {
+  const hasUnicorns = pathExistsSync(path.join(directory, 'unicorn.png'));
+  return hasUnicorns && directory;
+}, {type: 'directory'}));
+//=> ['/Users/sindresorhus/foo', '/Users/sindresorhus']
+```
+*/
+export function findUpMultipleSync(matcher: (directory: string) => Match, options?: Options): string[] | undefined;
+
+/**
 Check if a path exists.
 
 @param path - The path to a file or directory.

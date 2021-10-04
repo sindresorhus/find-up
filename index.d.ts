@@ -157,8 +157,8 @@ import path from 'node:path';
 import {findUpMultiple, pathExists} from 'find-up';
 
 console.log(await findUpMultiple(async directory => {
-  const hasUnicorns = await pathExists(path.join(directory, 'unicorn.png'));
-  return hasUnicorns && directory;
+	const hasUnicorns = await pathExists(path.join(directory, 'unicorn.png'));
+	return hasUnicorns && directory;
 }, {type: 'directory'}));
 //=> ['/Users/sindresorhus/foo', '/Users/sindresorhus']
 ```
@@ -207,8 +207,8 @@ import path from 'node:path';
 import {findUpMultipleSync, pathExistsSync} from 'find-up';
 
 console.log(findUpMultipleSync(directory => {
-  const hasUnicorns = pathExistsSync(path.join(directory, 'unicorn.png'));
-  return hasUnicorns && directory;
+	const hasUnicorns = pathExistsSync(path.join(directory, 'unicorn.png'));
+	return hasUnicorns && directory;
 }, {type: 'directory'}));
 //=> ['/Users/sindresorhus/foo', '/Users/sindresorhus']
 ```

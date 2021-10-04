@@ -143,7 +143,7 @@ console.log(await findUpMultiple(['rainbow.png', 'unicorn.png']));
 //=> ['/Users/sindresorhus/foo/unicorn.png', '/Users/sindresorhus/unicorn.png']
 ```
 */
-export function findUpMultiple(name: string | readonly string[], options?: Options): Promise<string[] | undefined>;
+export function findUpMultiple(name: string | readonly string[], options?: Options): Promise<string[]>;
 
 /**
 Find files or directories by walking up parent directories.
@@ -163,7 +163,7 @@ console.log(await findUpMultiple(async directory => {
 //=> ['/Users/sindresorhus/foo', '/Users/sindresorhus']
 ```
 */
-export function findUpMultiple(matcher: (directory: string) => (Match | Promise<Match>), options?: Options): Promise<string[] | undefined>;
+export function findUpMultiple(matcher: (directory: string) => (Match | Promise<Match>), options?: Options): Promise<string[]>;
 
 /**
 Synchronously find files or directories by walking up parent directories.
@@ -193,7 +193,7 @@ console.log(findUpMultipleSync(['rainbow.png', 'unicorn.png']));
 //=> ['/Users/sindresorhus/foo/unicorn.png', '/Users/sindresorhus/unicorn.png']
 ```
 */
-export function findUpMultipleSync(name: string | readonly string[], options?: Options): string[] | undefined;
+export function findUpMultipleSync(name: string | readonly string[], options?: Options): string[];
 
 /**
 Synchronously find files or directories by walking up parent directories.
@@ -213,7 +213,7 @@ console.log(findUpMultipleSync(directory => {
 //=> ['/Users/sindresorhus/foo', '/Users/sindresorhus']
 ```
 */
-export function findUpMultipleSync(matcher: (directory: string) => Match, options?: Options): string[] | undefined;
+export function findUpMultipleSync(matcher: (directory: string) => Match, options?: Options): string[];
 
 /**
 Check if a path exists.

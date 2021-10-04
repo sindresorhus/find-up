@@ -416,13 +416,13 @@ test('sync multiple (child file with stopAt)', t => {
 test('async multiple (not found, child file)', async t => {
 	const filePaths = await findUpMultiple('somenonexistentfile.js', {cwd: relative.barDir});
 
-	t.is(filePaths, undefined);
+	t.deepEqual(filePaths, []);
 });
 
 test('sync multiple (not found, child file)', t => {
 	const filePaths = findUpMultipleSync('somenonexistentfile.js', {cwd: relative.barDir});
 
-	t.is(filePaths, undefined);
+	t.deepEqual(filePaths, []);
 });
 
 test('async (not found, absolute file)', async t => {

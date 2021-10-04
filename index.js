@@ -83,7 +83,7 @@ export async function findUpMultiple(name, options = {}) {
 		directory = path.dirname(directory);
 	}
 
-	return matches.length > 0 ? matches : undefined;
+	return matches;
 }
 
 export function findUpSync(name, options = {}) {
@@ -164,7 +164,7 @@ export function findUpMultipleSync(name, options = {}) {
 		directory = path.dirname(directory);
 	}
 
-	return matches.length > 0 ? matches : undefined;
+	return matches;
 }
 
 export {

@@ -119,7 +119,7 @@ export function findUpSync(matcher: (directory: string) => Match, options?: Opti
 Find files or directories by walking up parent directories.
 
 @param name - The name of the file or directory to find. Can be multiple.
-@returns All paths found (by respecting the order of `name`s) or and empty array if none could be found.
+@returns All paths found (by respecting the order of `name`s) or an empty array if none could be found.
 
 @example
 ```

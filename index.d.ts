@@ -119,7 +119,7 @@ export function findUpSync(matcher: (directory: string) => Match, options?: Opti
 Find files or directories by walking up parent directories.
 
 @param name - The name of the file or directory to find. Can be multiple.
-@returns All paths found (by respecting the order of `name`s) or `undefined` if none could be found.
+@returns All paths found (by respecting the order of `name`s) or and empty array if none could be found.
 
 @example
 ```
@@ -149,7 +149,7 @@ export function findUpMultiple(name: string | readonly string[], options?: Optio
 Find files or directories by walking up parent directories.
 
 @param matcher - Called for each directory in the search. Return a path or `findUpStop` to stop the search.
-@returns All paths found or `undefined` if none could be found.
+@returns All paths found or an empty array if none could be found.
 
 @example
 ```
@@ -169,7 +169,7 @@ export function findUpMultiple(matcher: (directory: string) => (Match | Promise<
 Synchronously find files or directories by walking up parent directories.
 
 @param name - The name of the file or directory to find. Can be multiple.
-@returns All paths found (by respecting the order of `name`s) or `undefined` if none could be found.
+@returns All paths found (by respecting the order of `name`s) or an empty array if none could be found.
 
 @example
 ```
@@ -199,7 +199,7 @@ export function findUpMultipleSync(name: string | readonly string[], options?: O
 Synchronously find files or directories by walking up parent directories.
 
 @param matcher - Called for each directory in the search. Return a path or `findUpStop` to stop the search.
-@returns All paths found or `undefined` if none could be found.
+@returns All paths found or an empty array if none could be found.
 
 @example
 ```

@@ -92,13 +92,11 @@ export function findUpMultipleSync(name, options = {}) {
 
 export async function findUp(name, options = {}) {
 	const matches = await findUpMultiple(name, {...options, limit: 1});
-
 	return matches[0];
 }
 
 export function findUpSync(name, options = {}) {
 	const matches = findUpMultipleSync(name, {...options, limit: 1});
-
 	return matches[0];
 }
 

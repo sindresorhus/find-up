@@ -54,7 +54,7 @@ Returns a `Promise` for either the first path found (by respecting the order of 
 ### findUpMultiple(name, options?)
 ### findUpMultiple(matcher, options?)
 
-Returns a `Promise` for either the array of paths or an empty array if it couldn't be found.
+Returns a `Promise` for either an array of paths or an empty array if none could be found.
 
 ### findUpMultiple([...name], options?)
 
@@ -72,7 +72,7 @@ Returns the first path found (by respecting the order of the array) or `undefine
 ### findUpMultipleSync(name, options?)
 ### findUpMultipleSync(matcher, options?)
 
-Returns an array of paths or an empty array if it couldn't be found.
+Returns an array of paths or an empty array if none could be found.
 
 ### findUpMultipleSync([...name], options?)
 

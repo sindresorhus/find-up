@@ -2,7 +2,7 @@ import process from 'node:process';
 import {promisify} from 'node:util';
 import fs from 'node:fs';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import test from 'ava';
 import isPathInside from 'is-path-inside';
 import tempy from 'tempy';
@@ -48,6 +48,10 @@ absolute.barDir = path.join(absolute.fixtureDirectory, name.fooDirectory, name.b
 absolute.barDirQux = path.join(absolute.fixtureDirectory, name.fooDirectory, name.barDirectory, name.qux);
 absolute.fileLink = path.join(absolute.fixtureDirectory, name.fileLink);
 absolute.directoryLink = path.join(absolute.fixtureDirectory, name.directoryLink);
+
+const url = {
+	fixtureDirectory: pathToFileURL(absolute.fixtureDirectory),
+};
 
 // Create a disjoint directory, used for the not-found tests
 test.beforeEach(t => {
@@ -123,6 +127,11 @@ test('async (child file, custom cwd)', async t => {
 	});
 
 	t.is(foundPath, absolute.baz);
+
+	const foundPath2 = await findUp(name.baz, {
+		cwd: url.fixtureDirectory,
+	});
+	t.is(foundPath2, foundPath);
 });
 
 test('sync (child file, custom cwd)', t => {
@@ -131,6 +140,11 @@ test('sync (child file, custom cwd)', t => {
 	});
 
 	t.is(foundPath, absolute.baz);
+
+	const foundPath2 = findUpSync(name.baz, {
+		cwd: url.fixtureDirectory,
+	});
+	t.is(foundPath2, foundPath);
 });
 
 test('async (child file, array, custom cwd)', async t => {

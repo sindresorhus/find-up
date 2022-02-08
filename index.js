@@ -7,12 +7,7 @@ const toPath = urlOrPath => urlOrPath instanceof URL ? fileURLToPath(urlOrPath) 
 export const findUpStop = Symbol('findUpStop');
 
 export async function findUpMultiple(name, options = {}) {
-	let cwd = options.cwd || '';
-	if (cwd) {
-		cwd = toPath(cwd);
-	}
-
-	let directory = path.resolve(cwd);
+	let directory = path.resolve(toPath(options.cwd) || '');
 	const {root} = path.parse(directory);
 	const stopAt = path.resolve(directory, options.stopAt || root);
 	const limit = options.limit || Number.POSITIVE_INFINITY;
@@ -56,12 +51,7 @@ export async function findUpMultiple(name, options = {}) {
 }
 
 export function findUpMultipleSync(name, options = {}) {
-	let cwd = options.cwd || '';
-	if (cwd) {
-		cwd = toPath(cwd);
-	}
-
-	let directory = path.resolve(cwd);
+	let directory = path.resolve(toPath(options.cwd) || '');
 	const {root} = path.parse(directory);
 	const stopAt = options.stopAt || root;
 	const limit = options.limit || Number.POSITIVE_INFINITY;

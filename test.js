@@ -5,7 +5,7 @@ import path from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import test from 'ava';
 import isPathInside from 'is-path-inside';
-import tempy from 'tempy';
+import {temporaryDirectory} from 'tempy';
 import {findUp, findUpSync, findUpMultiple, findUpMultipleSync, findUpStop, pathExists, pathExistsSync} from './index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -55,8 +55,7 @@ const url = {
 
 // Create a disjoint directory, used for the not-found tests
 test.beforeEach(t => {
-	const temporaryDirectory = tempy.directory();
-	t.context.disjoint = temporaryDirectory;
+	t.context.disjoint = temporaryDirectory();
 });
 
 test.afterEach(t => {

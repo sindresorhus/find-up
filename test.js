@@ -55,8 +55,7 @@ const url = {
 
 // Create a disjoint directory, used for the not-found tests
 test.beforeEach(t => {
-	const disjointDirectory = temporaryDirectory();
-	t.context.disjoint = disjointDirectory;
+	t.context.disjoint = temporaryDirectory();
 });
 
 test.afterEach(t => {

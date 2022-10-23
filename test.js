@@ -21,6 +21,7 @@ const name = {
 	qux: 'qux.js',
 	fileLink: 'file-link',
 	directoryLink: 'directory-link',
+	dotDirectory: '.git',
 };
 
 // These paths are relative to the project root
@@ -48,6 +49,7 @@ absolute.barDir = path.join(absolute.fixtureDirectory, name.fooDirectory, name.b
 absolute.barDirQux = path.join(absolute.fixtureDirectory, name.fooDirectory, name.barDirectory, name.qux);
 absolute.fileLink = path.join(absolute.fixtureDirectory, name.fileLink);
 absolute.directoryLink = path.join(absolute.fixtureDirectory, name.directoryLink);
+absolute.dotDirectory = path.join(__dirname, name.dotDirectory);
 
 const url = {
 	fixtureDirectory: pathToFileURL(absolute.fixtureDirectory),
@@ -651,4 +653,14 @@ test('sync (check if path exists)', t => {
 	t.true(pathExistsSync(absolute.barDir));
 	t.true(pathExistsSync(absolute.packageJson));
 	t.false(pathExistsSync('fake'));
+});
+
+test('async (dot file)', async t => {
+	const foundPath = await findUp(name.dotDirectory, {type: 'directory'});
+	t.is(foundPath, absolute.dotDirectory);
+});
+
+test('sync (dot file)', async t => {
+	const foundPath = await findUp(name.dotDirectory, {type: 'directory'});
+	t.is(foundPath, absolute.dotDirectory);
 });

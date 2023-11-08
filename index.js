@@ -9,7 +9,7 @@ export const findUpStop = Symbol('findUpStop');
 export async function findUpMultiple(name, options = {}) {
 	let directory = path.resolve(toPath(options.cwd) || '');
 	const {root} = path.parse(directory);
-	const stopAt = path.resolve(directory, options.stopAt || root);
+	const stopAt = path.resolve(directory, toPath(options.stopAt ?? root));
 	const limit = options.limit || Number.POSITIVE_INFINITY;
 	const paths = [name].flat();
 
@@ -53,7 +53,7 @@ export async function findUpMultiple(name, options = {}) {
 export function findUpMultipleSync(name, options = {}) {
 	let directory = path.resolve(toPath(options.cwd) || '');
 	const {root} = path.parse(directory);
-	const stopAt = options.stopAt || root;
+	const stopAt = path.resolve(directory, toPath(options.stopAt) ?? root);
 	const limit = options.limit || Number.POSITIVE_INFINITY;
 	const paths = [name].flat();
 

@@ -1,5 +1,13 @@
 import {expectType, expectError} from 'tsd';
-import {findUp, findUpSync, findUpMultiple, findUpMultipleSync, findUpStop, pathExists, pathExistsSync} from './index.js';
+import {
+	findUp,
+	findUpSync,
+	findUpMultiple,
+	findUpMultipleSync,
+	findUpStop,
+	pathExists,
+	pathExistsSync,
+} from './index.js';
 
 expectType<Promise<string | undefined>>(findUp('unicorn.png'));
 expectType<Promise<string | undefined>>(findUp('unicorn.png', {cwd: ''}));

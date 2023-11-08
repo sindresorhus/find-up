@@ -1,16 +1,14 @@
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
 import {locatePath, locatePathSync} from 'locate-path';
-
-const toPath = urlOrPath => urlOrPath instanceof URL ? fileURLToPath(urlOrPath) : urlOrPath;
+import {toPath} from 'unicorn-magic';
 
 export const findUpStop = Symbol('findUpStop');
 
 export async function findUpMultiple(name, options = {}) {
-	let directory = path.resolve(toPath(options.cwd) || '');
+	let directory = path.resolve(toPath(options.cwd) ?? '');
 	const {root} = path.parse(directory);
 	const stopAt = path.resolve(directory, toPath(options.stopAt ?? root));
-	const limit = options.limit || Number.POSITIVE_INFINITY;
+	const limit = options.limit ?? Number.POSITIVE_INFINITY;
 	const paths = [name].flat();
 
 	const runMatcher = async locateOptions => {
@@ -51,10 +49,10 @@ export async function findUpMultiple(name, options = {}) {
 }
 
 export function findUpMultipleSync(name, options = {}) {
-	let directory = path.resolve(toPath(options.cwd) || '');
+	let directory = path.resolve(toPath(options.cwd) ?? '');
 	const {root} = path.parse(directory);
 	const stopAt = path.resolve(directory, toPath(options.stopAt) ?? root);
-	const limit = options.limit || Number.POSITIVE_INFINITY;
+	const limit = options.limit ?? Number.POSITIVE_INFINITY;
 	const paths = [name].flat();
 
 	const runMatcher = locateOptions => {

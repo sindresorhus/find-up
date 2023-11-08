@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/unified-signatures */
-import {Options as LocatePathOptions} from 'locate-path';
+import {type Options as LocatePathOptions} from 'locate-path';
 
 /**
 Return this in a `matcher` function to stop the search and force `findUp` to immediately return `undefined`.
@@ -8,14 +7,14 @@ export const findUpStop: unique symbol;
 
 export type Match = string | typeof findUpStop | undefined;
 
-export interface Options extends LocatePathOptions {
+export type Options = {
 	/**
-	The path to the directory to stop the search before reaching root if there were no matches before the `stopAt` directory.
+	A directory path where the search halts if no matches are found before reaching this point.
 
-	@default path.parse(cwd).root
+	Default: Root directory
 	*/
 	readonly stopAt?: string;
-}
+} & LocatePathOptions;
 
 /**
 Find a file or directory by walking up parent directories.

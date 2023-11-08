@@ -6,7 +6,15 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import test from 'ava';
 import isPathInside from 'is-path-inside';
 import {temporaryDirectory} from 'tempy';
-import {findUp, findUpSync, findUpMultiple, findUpMultipleSync, findUpStop, pathExists, pathExistsSync} from './index.js';
+import {
+	findUp,
+	findUpSync,
+	findUpMultiple,
+	findUpMultipleSync,
+	findUpStop,
+	pathExists,
+	pathExistsSync,
+} from './index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -356,90 +364,6 @@ test('sync (absolute directory)', t => {
 	t.is(filePath, absolute.barDir);
 });
 
-test('async multiple (child file)', async t => {
-	const filePaths = await findUpMultiple(name.qux, {cwd: relative.barDir});
-
-	t.deepEqual(filePaths, [absolute.barDirQux, absolute.qux]);
-});
-
-test('sync multiple (child file)', t => {
-	const filePaths = findUpMultipleSync(name.qux, {cwd: relative.barDir});
-
-	t.deepEqual(filePaths, [absolute.barDirQux, absolute.qux]);
-});
-
-test('async multiple (child directory)', async t => {
-	const foundPath = await findUpMultiple(name.fixtureDirectory, {type: 'directory'});
-
-	t.deepEqual(foundPath, [absolute.fixtureDirectory]);
-});
-
-test('sync multiple (child directory)', t => {
-	const foundPath = findUpMultipleSync(name.fixtureDirectory, {type: 'directory'});
-
-	t.deepEqual(foundPath, [absolute.fixtureDirectory]);
-});
-
-test('async multiple (child file, array)', async t => {
-	const filePaths = await findUpMultiple([name.baz, name.qux], {cwd: relative.barDir});
-
-	t.deepEqual(filePaths, [absolute.barDirQux, absolute.baz]);
-});
-
-test('sync multiple (child file, array)', t => {
-	const filePaths = findUpMultipleSync([name.baz, name.qux], {cwd: relative.barDir});
-
-	t.deepEqual(filePaths, [absolute.barDirQux, absolute.baz]);
-});
-
-test('async multiple (child directory, custom cwd, array)', async t => {
-	const foundPath = await findUpMultiple([name.fixtureDirectory, name.fooDirectory], {
-		cwd: absolute.barDir,
-		type: 'directory',
-	});
-
-	t.deepEqual(foundPath, [absolute.fooDir, absolute.fixtureDirectory]);
-});
-
-test('sync multiple (child directory, custom cwd, array)', t => {
-	const foundPath = findUpMultipleSync([name.fixtureDirectory, name.fooDirectory], {
-		cwd: absolute.barDir,
-		type: 'directory',
-	});
-
-	t.deepEqual(foundPath, [absolute.fooDir, absolute.fixtureDirectory]);
-});
-
-test('async multiple (child file with stopAt)', async t => {
-	const filePaths = await findUpMultiple(name.qux, {
-		cwd: relative.barDir,
-		stopAt: absolute.fooDir,
-	});
-
-	t.deepEqual(filePaths, [absolute.barDirQux]);
-});
-
-test('sync multiple (child file with stopAt)', t => {
-	const filePaths = findUpMultipleSync(name.qux, {
-		cwd: relative.barDir,
-		stopAt: absolute.fooDir,
-	});
-
-	t.deepEqual(filePaths, [absolute.barDirQux]);
-});
-
-test('async multiple (not found, child file)', async t => {
-	const filePaths = await findUpMultiple('somenonexistentfile.js', {cwd: relative.barDir});
-
-	t.deepEqual(filePaths, []);
-});
-
-test('sync multiple (not found, child file)', t => {
-	const filePaths = findUpMultipleSync('somenonexistentfile.js', {cwd: relative.barDir});
-
-	t.deepEqual(filePaths, []);
-});
-
 test('async (not found, absolute file)', async t => {
 	const filePath = await findUp(path.resolve('somenonexistentfile.js'));
 
@@ -498,6 +422,16 @@ test('sync (not found, custom cwd)', t => {
 	});
 
 	t.is(foundPath, undefined);
+});
+
+test('async (dot file)', async t => {
+	const foundPath = await findUp(name.dotDirectory, {type: 'directory'});
+	t.is(foundPath, absolute.dotDirectory);
+});
+
+test('sync (dot file)', async t => {
+	const foundPath = await findUp(name.dotDirectory, {type: 'directory'});
+	t.is(foundPath, absolute.dotDirectory);
 });
 
 test('async (matcher function)', async t => {
@@ -655,12 +589,86 @@ test('sync (check if path exists)', t => {
 	t.false(pathExistsSync('fake'));
 });
 
-test('async (dot file)', async t => {
-	const foundPath = await findUp(name.dotDirectory, {type: 'directory'});
-	t.is(foundPath, absolute.dotDirectory);
+test('async multiple (child file)', async t => {
+	const filePaths = await findUpMultiple(name.qux, {cwd: relative.barDir});
+
+	t.deepEqual(filePaths, [absolute.barDirQux, absolute.qux]);
 });
 
-test('sync (dot file)', async t => {
-	const foundPath = await findUp(name.dotDirectory, {type: 'directory'});
-	t.is(foundPath, absolute.dotDirectory);
+test('sync multiple (child file)', t => {
+	const filePaths = findUpMultipleSync(name.qux, {cwd: relative.barDir});
+
+	t.deepEqual(filePaths, [absolute.barDirQux, absolute.qux]);
+});
+
+test('async multiple (child directory)', async t => {
+	const foundPath = await findUpMultiple(name.fixtureDirectory, {type: 'directory'});
+
+	t.deepEqual(foundPath, [absolute.fixtureDirectory]);
+});
+
+test('sync multiple (child directory)', t => {
+	const foundPath = findUpMultipleSync(name.fixtureDirectory, {type: 'directory'});
+
+	t.deepEqual(foundPath, [absolute.fixtureDirectory]);
+});
+
+test('async multiple (child file, array)', async t => {
+	const filePaths = await findUpMultiple([name.baz, name.qux], {cwd: relative.barDir});
+
+	t.deepEqual(filePaths, [absolute.barDirQux, absolute.baz]);
+});
+
+test('sync multiple (child file, array)', t => {
+	const filePaths = findUpMultipleSync([name.baz, name.qux], {cwd: relative.barDir});
+
+	t.deepEqual(filePaths, [absolute.barDirQux, absolute.baz]);
+});
+
+test('async multiple (child directory, custom cwd, array)', async t => {
+	const foundPath = await findUpMultiple([name.fixtureDirectory, name.fooDirectory], {
+		cwd: absolute.barDir,
+		type: 'directory',
+	});
+
+	t.deepEqual(foundPath, [absolute.fooDir, absolute.fixtureDirectory]);
+});
+
+test('sync multiple (child directory, custom cwd, array)', t => {
+	const foundPath = findUpMultipleSync([name.fixtureDirectory, name.fooDirectory], {
+		cwd: absolute.barDir,
+		type: 'directory',
+	});
+
+	t.deepEqual(foundPath, [absolute.fooDir, absolute.fixtureDirectory]);
+});
+
+test('async multiple (child file with stopAt)', async t => {
+	const filePaths = await findUpMultiple(name.qux, {
+		cwd: relative.barDir,
+		stopAt: absolute.fooDir,
+	});
+
+	t.deepEqual(filePaths, [absolute.barDirQux]);
+});
+
+test('sync multiple (child file with stopAt)', t => {
+	const filePaths = findUpMultipleSync(name.qux, {
+		cwd: relative.barDir,
+		stopAt: absolute.fooDir,
+	});
+
+	t.deepEqual(filePaths, [absolute.barDirQux]);
+});
+
+test('async multiple (not found, child file)', async t => {
+	const filePaths = await findUpMultiple('somenonexistentfile.js', {cwd: relative.barDir});
+
+	t.deepEqual(filePaths, []);
+});
+
+test('sync multiple (not found, child file)', t => {
+	const filePaths = findUpMultipleSync('somenonexistentfile.js', {cwd: relative.barDir});
+
+	t.deepEqual(filePaths, []);
 });

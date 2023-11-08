@@ -4,8 +4,8 @@
 
 ## Install
 
-```
-$ npm install find-up
+```sh
+npm install find-up
 ```
 
 ## Usage
@@ -45,7 +45,7 @@ console.log(await findUp(async directory => {
 ### findUp(name, options?)
 ### findUp(matcher, options?)
 
-Returns a `Promise` for either the path or `undefined` if it couldn't be found.
+Returns a `Promise` for either the path or `undefined` if it could not be found.
 
 ### findUp([...name], options?)
 
@@ -63,7 +63,7 @@ Returns a `Promise` for either an array of the first paths found (by respecting 
 ### findUpSync(name, options?)
 ### findUpSync(matcher, options?)
 
-Returns a path or `undefined` if it couldn't be found.
+Returns a path or `undefined` if it could not be found.
 
 ### findUpSync([...name], options?)
 
@@ -107,9 +107,9 @@ The directory to start from.
 
 Type: `string`\
 Default: `'file'`\
-Values: `'file'` `'directory'`
+Values: `'file' | 'directory'`
 
-The type of paths that can match.
+The type of path to match.
 
 ##### allowSymlinks
 
@@ -120,10 +120,10 @@ Allow symbolic links to match if they point to the chosen path type.
 
 ##### stopAt
 
-Type: `string`\
-Default: `path.parse(cwd).root`
+Type: `URL | string`\
+Default: Root directory
 
-The path to the directory to stop the search before reaching root if there were no matches before the `stopAt` directory.
+A directory path where the search halts if no matches are found before reaching this point.
 
 ### pathExists(path)
 
@@ -155,18 +155,6 @@ await findUp(directory => {
 ## Related
 
 - [find-up-cli](https://github.com/sindresorhus/find-up-cli) - CLI for this module
-- [pkg-up](https://github.com/sindresorhus/pkg-up) - Find the closest package.json file
+- [package-up](https://github.com/sindresorhus/package-up) - Find the closest package.json file
 - [pkg-dir](https://github.com/sindresorhus/pkg-dir) - Find the root directory of an npm package
 - [resolve-from](https://github.com/sindresorhus/resolve-from) - Resolve the path of a module like `require.resolve()` but from a given path
-
----
-
-<div align="center">
-	<b>
-		<a href="https://tidelift.com/subscription/pkg/npm-find-up?utm_source=npm-find-up&utm_medium=referral&utm_campaign=readme">Get professional support for 'find-up' with a Tidelift subscription</a>
-	</b>
-	<br>
-	<sub>
-		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
-	</sub>
-</div>

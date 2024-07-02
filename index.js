@@ -100,8 +100,3 @@ export function findUpSync(name, options = {}) {
 	const matches = findUpMultipleSync(name, {...options, limit: 1});
 	return matches[0];
 }
-
-export {
-	pathExists,
-	pathExistsSync,
-} from 'path-exists';

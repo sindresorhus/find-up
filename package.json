@@ -49,6 +49,7 @@
 	"dependencies": {
 		"locate-path": "^7.2.0",
 		"path-exists": "^5.0.0",
+		"quansync": "^0.2.8",
 		"unicorn-magic": "^0.1.0"
 	},
 	"devDependencies": {

@@ -54,7 +54,7 @@ export const findUpMultiple = quansync(function * (name, options = {}) {
 	}
 
 	return matches;
-})
+});
 
 export async function findUp(name, options = {}) {
 	const matches = await findUpMultiple(name, {...options, limit: 1});

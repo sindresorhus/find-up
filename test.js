@@ -12,8 +12,6 @@ import {
 	findUpMultiple,
 	findUpMultipleSync,
 	findUpStop,
-	pathExists,
-	pathExistsSync,
 } from './index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -565,28 +563,6 @@ test('sync (matcher function stops early)', t => {
 	}), undefined);
 	t.true(visited.has(cwd));
 	t.is(visited.size, 1);
-});
-
-test('async (check if path exists)', async t => {
-	if (!isWindows) {
-		t.true(await pathExists(absolute.directoryLink));
-		t.true(await pathExists(absolute.fileLink));
-	}
-
-	t.true(await pathExists(absolute.barDir));
-	t.true(await pathExists(absolute.packageJson));
-	t.false(await pathExists('fake'));
-});
-
-test('sync (check if path exists)', t => {
-	if (!isWindows) {
-		t.true(pathExistsSync(absolute.directoryLink));
-		t.true(pathExistsSync(absolute.fileLink));
-	}
-
-	t.true(pathExistsSync(absolute.barDir));
-	t.true(pathExistsSync(absolute.packageJson));
-	t.false(pathExistsSync('fake'));
 });
 
 test('async multiple (child file)', async t => {

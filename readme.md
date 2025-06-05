@@ -156,5 +156,5 @@ await findUp(directory => {
 
 - [find-up-cli](https://github.com/sindresorhus/find-up-cli) - CLI for this module
 - [package-up](https://github.com/sindresorhus/package-up) - Find the closest package.json file
-- [pkg-dir](https://github.com/sindresorhus/pkg-dir) - Find the root directory of an npm package
+- [package-directory](https://github.com/sindresorhus/package-directory) - Find the root directory of an npm package
 - [resolve-from](https://github.com/sindresorhus/resolve-from) - Resolve the path of a module like `require.resolve()` but from a given path

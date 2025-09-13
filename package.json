@@ -20,7 +20,7 @@
 		"node": ">=18"
 	},
 	"scripts": {
-		"test": "xo && ava && tsd"
+		"test": "xo && ava test/findup.js test/finddown.js && tsd"
 	},
 	"files": [
 		"index.js",
@@ -56,5 +56,11 @@
 		"tempy": "^3.1.0",
 		"tsd": "^0.29.0",
 		"xo": "^0.56.0"
+	},
+	"xo": {
+		"rules": {
+			"ava/no-import-test-files": "off",
+			"max-params": ["warn", 5]
+		}
 	}
 }

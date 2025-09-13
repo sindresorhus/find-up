@@ -5,8 +5,6 @@ import {
 	findUpMultiple,
 	findUpMultipleSync,
 	findUpStop,
-	pathExists,
-	pathExistsSync,
 } from './index.js';
 
 expectType<Promise<string | undefined>>(findUp('unicorn.png'));
@@ -193,6 +191,3 @@ expectType<string[]>(findUpMultipleSync((): typeof findUpStop => findUpStop, {cw
 expectType<string[]>(findUpMultipleSync((): typeof findUpStop => findUpStop, {type: 'file'}));
 expectType<string[]>(findUpMultipleSync((): typeof findUpStop => findUpStop, {type: 'directory'}));
 expectType<string[]>(findUpMultipleSync((): typeof findUpStop => findUpStop, {stopAt: 'foo'}));
-
-expectType<Promise<boolean>>(pathExists('unicorn.png'));
-expectType<boolean>(pathExistsSync('unicorn.png'));

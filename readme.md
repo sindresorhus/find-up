@@ -25,7 +25,8 @@ npm install find-up
 
 ```js
 import path from 'node:path';
-import {findUp, pathExists} from 'find-up';
+import {pathExists} from 'path-exists';
+import {findUp, findDown} from 'find-up';
 
 console.log(await findUp('unicorn.png'));
 //=> '/Users/sindresorhus/unicorn.png'
@@ -34,10 +35,16 @@ console.log(await findUp(['rainbow.png', 'unicorn.png']));
 //=> '/Users/sindresorhus/unicorn.png'
 
 console.log(await findUp(async directory => {
-	const hasUnicorns = await pathExists(path.join(directory, 'unicorn.png'));
-	return hasUnicorns && directory;
+	const hasUnicorn = await pathExists(path.join(directory, 'unicorn.png'));
+	return hasUnicorn && directory;
 }, {type: 'directory'}));
 //=> '/Users/sindresorhus'
+
+// Combine findUp (as a matcher) with findDown to locate the first
+// ancestor that contains a matching descendant at a limited depth.
+console.log(await findUp(async directory => {
+	return findDown('example.js', {cwd: directory, depth: 1});
+}));
 ```
 
 ## API
@@ -49,16 +56,16 @@ Returns a `Promise` for either the path or `undefined` if it could not be found.
 
 ### findUp([...name], options?)
 
-Returns a `Promise` for either the first path found (by respecting the order of the array) or `undefined` if none could be found.
+Returns a `Promise` for either the first path found (by respecting the order of names) or `undefined` if none could be found.
 
 ### findUpMultiple(name, options?)
 ### findUpMultiple(matcher, options?)
 
-Returns a `Promise` for either an array of paths or an empty array if none could be found.
+Returns a `Promise` for either an array of all paths found or an empty array if none could be found.
 
 ### findUpMultiple([...name], options?)
 
-Returns a `Promise` for either an array of the first paths found (by respecting the order of the array) or an empty array if none could be found.
+Returns a `Promise` for either an array of all paths found (by respecting the order of names) or an empty array if none could be found.
 
 ### findUpSync(name, options?)
 ### findUpSync(matcher, options?)
@@ -67,30 +74,38 @@ Returns a path or `undefined` if it could not be found.
 
 ### findUpSync([...name], options?)
 
-Returns the first path found (by respecting the order of the array) or `undefined` if none could be found.
+Returns the first path found (by respecting the order of names) or `undefined` if none could be found.
 
 ### findUpMultipleSync(name, options?)
 ### findUpMultipleSync(matcher, options?)
 
-Returns an array of paths or an empty array if none could be found.
+Returns an array of all paths found or an empty array if none could be found.
 
 ### findUpMultipleSync([...name], options?)
 
-Returns an array of the first paths found (by respecting the order of the array) or an empty array if none could be found.
+Returns an array of all paths found (by respecting the order of names) or an empty array if none could be found.
+
+### findDown(name, options?)
+### findDown([...name], options?)
+
+Find a file or directory by walking down descendant directories from `cwd`. Returns a `Promise` for either the path or `undefined` if it could not be found.
+
+### findDownSync(name, options?)
+### findDownSync([...name], options?)
+
+Synchronous version of `findDown`.
 
 #### name
 
 Type: `string`
 
-The name of the file or directory to find.
+The name of the file or directory to find. Can be an array of names to search for multiple files.
 
 #### matcher
 
 Type: `Function`
 
-A function that will be called with each directory until it returns a `string` with the path, which stops the search, or the root directory has been reached and nothing was found. Useful if you want to match files with certain patterns, set of permissions, or other advanced use-cases.
-
-When using async mode, the `matcher` may optionally be an async or promise-returning function that returns the path.
+Called for each directory in the search. Return a path or `findUpStop` to stop the search. Useful if you want to match files with certain patterns, set of permissions, or other advanced use-cases.
 
 #### options
 
@@ -125,20 +140,6 @@ Default: Root directory
 
 A directory path where the search halts if no matches are found before reaching this point.
 
-### pathExists(path)
-
-Returns a `Promise<boolean>` of whether the path exists.
-
-### pathExistsSync(path)
-
-Returns a `boolean` of whether the path exists.
-
-#### path
-
-Type: `string`
-
-The path to a file or directory.
-
 ### findUpStop
 
 A [`Symbol`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) that can be returned by a `matcher` function to stop the search and cause `findUp` to immediately return `undefined`. Useful as a performance optimization in case the current working directory is deeply nested in the filesystem.
@@ -148,9 +149,58 @@ import path from 'node:path';
 import {findUp, findUpStop} from 'find-up';
 
 await findUp(directory => {
-	return path.basename(directory) === 'work' ? findUpStop : 'logo.png';
+	// Stop searching if we've reached a 'work' directory
+	if (path.basename(directory) === 'work') {
+		return findUpStop;
+	}
+
+	// Look for package.json in this directory
+	return 'package.json';
 });
 ```
+
+### findDown options
+
+Type: `object`
+
+##### cwd
+
+Type: `URL | string`\
+Default: `process.cwd()`
+
+The directory to start from.
+
+##### depth
+
+Type: `number`\
+Default: `1`
+
+Maximum number of directory levels to traverse below `cwd`.
+
+##### type
+
+Type: `string`\
+Default: `'file'`\
+Values: `'file' | 'directory'`
+
+The type of path to match.
+
+##### allowSymlinks
+
+Type: `boolean`\
+Default: `true`
+
+Allow symbolic links to match if they point to the chosen path type.
+
+##### strategy
+
+Type: `string`\
+Default: `'breadth'`\
+Values: `'breadth' | 'depth'`
+
+Search strategy to use:
+- `'breadth'`: Breadth-first search, finds shallower matches first
+- `'depth'`: Depth-first search, fully explores each branch before moving to the next
 
 ## Related
 

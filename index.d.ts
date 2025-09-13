@@ -19,8 +19,8 @@ export type Options = {
 /**
 Find a file or directory by walking up parent directories.
 
-@param name - The name of the file or directory to find. Can be multiple.
-@returns The first path found (by respecting the order of `name`s) or `undefined` if none could be found.
+@param name - The name of the file or directory to find. Can be an array of names to search for multiple files.
+@returns The first path found (by respecting the order of names) or `undefined` if none could be found.
 
 @example
 ```
@@ -49,16 +49,17 @@ export function findUp(name: string | readonly string[], options?: Options): Pro
 Find a file or directory by walking up parent directories.
 
 @param matcher - Called for each directory in the search. Return a path or `findUpStop` to stop the search.
-@returns The first path found or `undefined` if none could be found.
+@returns The path or `undefined` if it could not be found.
 
 @example
 ```
 import path from 'node:path';
-import {findUp, pathExists} from 'find-up';
+import {pathExists} from 'path-exists';
+import {findUp} from 'find-up';
 
 console.log(await findUp(async directory => {
-	const hasUnicorns = await pathExists(path.join(directory, 'unicorn.png'));
-	return hasUnicorns && directory;
+	const hasUnicorn = await pathExists(path.join(directory, 'unicorn.png'));
+	return hasUnicorn && directory;
 }, {type: 'directory'}));
 //=> '/Users/sindresorhus'
 ```
@@ -68,8 +69,8 @@ export function findUp(matcher: (directory: string) => (Match | Promise<Match>),
 /**
 Synchronously find a file or directory by walking up parent directories.
 
-@param name - The name of the file or directory to find. Can be multiple.
-@returns The first path found (by respecting the order of `name`s) or `undefined` if none could be found.
+@param name - The name of the file or directory to find. Can be an array of names to search for multiple files.
+@returns The first path found (by respecting the order of names) or `undefined` if none could be found.
 
 @example
 ```
@@ -98,16 +99,17 @@ export function findUpSync(name: string | readonly string[], options?: Options):
 Synchronously find a file or directory by walking up parent directories.
 
 @param matcher - Called for each directory in the search. Return a path or `findUpStop` to stop the search.
-@returns The first path found or `undefined` if none could be found.
+@returns The path or `undefined` if it could not be found.
 
 @example
 ```
 import path from 'node:path';
-import {findUpSync, pathExistsSync} from 'find-up';
+import {pathExistsSync} from 'path-exists';
+import {findUpSync} from 'find-up';
 
 console.log(findUpSync(directory => {
-	const hasUnicorns = pathExistsSync(path.join(directory, 'unicorn.png'));
-	return hasUnicorns && directory;
+	const hasUnicorn = pathExistsSync(path.join(directory, 'unicorn.png'));
+	return hasUnicorn && directory;
 }, {type: 'directory'}));
 //=> '/Users/sindresorhus'
 ```
@@ -117,8 +119,8 @@ export function findUpSync(matcher: (directory: string) => Match, options?: Opti
 /**
 Find files or directories by walking up parent directories.
 
-@param name - The name of the file or directory to find. Can be multiple.
-@returns All paths found (by respecting the order of `name`s) or an empty array if none could be found.
+@param name - The name of the file or directory to find. Can be an array of names to search for multiple files.
+@returns An array of all paths found (by respecting the order of names) or an empty array if none could be found.
 
 @example
 ```
@@ -148,16 +150,17 @@ export function findUpMultiple(name: string | readonly string[], options?: Optio
 Find files or directories by walking up parent directories.
 
 @param matcher - Called for each directory in the search. Return a path or `findUpStop` to stop the search.
-@returns All paths found or an empty array if none could be found.
+@returns An array of all paths found or an empty array if none could be found.
 
 @example
 ```
 import path from 'node:path';
-import {findUpMultiple, pathExists} from 'find-up';
+import {pathExists} from 'path-exists';
+import {findUpMultiple} from 'find-up';
 
 console.log(await findUpMultiple(async directory => {
-	const hasUnicorns = await pathExists(path.join(directory, 'unicorn.png'));
-	return hasUnicorns && directory;
+	const hasUnicorn = await pathExists(path.join(directory, 'unicorn.png'));
+	return hasUnicorn && directory;
 }, {type: 'directory'}));
 //=> ['/Users/sindresorhus/foo', '/Users/sindresorhus']
 ```
@@ -167,8 +170,8 @@ export function findUpMultiple(matcher: (directory: string) => (Match | Promise<
 /**
 Synchronously find files or directories by walking up parent directories.
 
-@param name - The name of the file or directory to find. Can be multiple.
-@returns All paths found (by respecting the order of `name`s) or an empty array if none could be found.
+@param name - The name of the file or directory to find. Can be an array of names to search for multiple files.
+@returns An array of all paths found (by respecting the order of names) or an empty array if none could be found.
 
 @example
 ```
@@ -198,50 +201,43 @@ export function findUpMultipleSync(name: string | readonly string[], options?: O
 Synchronously find files or directories by walking up parent directories.
 
 @param matcher - Called for each directory in the search. Return a path or `findUpStop` to stop the search.
-@returns All paths found or an empty array if none could be found.
+@returns An array of all paths found or an empty array if none could be found.
 
 @example
 ```
 import path from 'node:path';
-import {findUpMultipleSync, pathExistsSync} from 'find-up';
+import {pathExistsSync} from 'path-exists';
+import {findUpMultipleSync} from 'find-up';
 
 console.log(findUpMultipleSync(directory => {
-	const hasUnicorns = pathExistsSync(path.join(directory, 'unicorn.png'));
-	return hasUnicorns && directory;
+	const hasUnicorn = pathExistsSync(path.join(directory, 'unicorn.png'));
+	return hasUnicorn && directory;
 }, {type: 'directory'}));
 //=> ['/Users/sindresorhus/foo', '/Users/sindresorhus']
 ```
 */
 export function findUpMultipleSync(matcher: (directory: string) => Match, options?: Options): string[];
 
-/**
-Check if a path exists.
-
-@param path - The path to a file or directory.
-@returns Whether the path exists.
-
-@example
-```
-import {pathExists} from 'find-up';
-
-console.log(await pathExists('/Users/sindresorhus/unicorn.png'));
-//=> true
-```
-*/
-export function pathExists(path: string): Promise<boolean>;
+export type FindDownOptions = {
+	readonly cwd?: URL | string;
+	readonly depth?: number;
+	readonly type?: 'file' | 'directory';
+	readonly allowSymlinks?: boolean;
+	readonly strategy?: 'breadth' | 'depth';
+};
 
 /**
-Synchronously check if a path exists.
+Find a file or directory by walking down descendant directories from `cwd`.
 
-@param path - Path to the file or directory.
-@returns Whether the path exists.
-
-@example
-```
-import {pathExistsSync} from 'find-up';
-
-console.log(pathExistsSync('/Users/sindresorhus/unicorn.png'));
-//=> true
-```
+@param name - The name of the file or directory to find. Can be an array of names to search for multiple files.
+@returns The path or `undefined` if it could not be found.
 */
-export function pathExistsSync(path: string): boolean;
+export function findDown(name: string | readonly string[], options?: FindDownOptions): Promise<string | undefined>;
+
+/**
+Synchronously find a file or directory by walking down descendant directories from `cwd`.
+
+@param name - The name of the file or directory to find. Can be an array of names to search for multiple files.
+@returns The path or `undefined` if it could not be found.
+*/
+export function findDownSync(name: string | readonly string[], options?: FindDownOptions): string | undefined;

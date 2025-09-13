@@ -1,4 +1,5 @@
 import path from 'node:path';
+import fs from 'node:fs';
 import {locatePath, locatePathSync} from 'locate-path';
 import {toPath} from 'unicorn-magic';
 
@@ -100,3 +101,148 @@ export function findUpSync(name, options = {}) {
 	const matches = findUpMultipleSync(name, {...options, limit: 1});
 	return matches[0];
 }
+
+async function findDownDepthFirst(directory, paths, maxDepth, locateOptions, currentDepth = 0) {
+	const found = await locatePath(paths, {cwd: directory, ...locateOptions});
+	if (found) {
+		return path.resolve(directory, found);
+	}
+
+	if (currentDepth >= maxDepth) {
+		return undefined;
+	}
+
+	try {
+		const entries = await fs.promises.readdir(directory, {withFileTypes: true});
+		for (const entry of entries) {
+			if (entry.isDirectory()) {
+				// eslint-disable-next-line no-await-in-loop
+				const result = await findDownDepthFirst(
+					path.join(directory, entry.name),
+					paths,
+					maxDepth,
+					locateOptions,
+					currentDepth + 1,
+				);
+				if (result) {
+					return result;
+				}
+			}
+		}
+	} catch {}
+
+	return undefined;
+}
+
+function findDownDepthFirstSync(directory, paths, maxDepth, locateOptions, currentDepth = 0) {
+	const found = locatePathSync(paths, {cwd: directory, ...locateOptions});
+	if (found) {
+		return path.resolve(directory, found);
+	}
+
+	if (currentDepth >= maxDepth) {
+		return undefined;
+	}
+
+	try {
+		const entries = fs.readdirSync(directory, {withFileTypes: true});
+		for (const entry of entries) {
+			if (entry.isDirectory()) {
+				const result = findDownDepthFirstSync(
+					path.join(directory, entry.name),
+					paths,
+					maxDepth,
+					locateOptions,
+					currentDepth + 1,
+				);
+				if (result) {
+					return result;
+				}
+			}
+		}
+	} catch {}
+
+	return undefined;
+}
+
+function prepareFindDownOptions(name, options) {
+	const startDirectory = path.resolve(toPath(options.cwd) ?? '');
+	const maxDepth = Math.max(0, options.depth ?? 1);
+	const paths = [name].flat();
+	const {type = 'file', allowSymlinks = true, strategy = 'breadth'} = options;
+	const locateOptions = {type, allowSymlinks};
+	return {startDirectory, maxDepth, paths, locateOptions, strategy};
+}
+
+export async function findDown(name, options = {}) {
+	const {startDirectory, maxDepth, paths, locateOptions, strategy} = prepareFindDownOptions(name, options);
+
+	if (strategy === 'depth') {
+		return findDownDepthFirst(startDirectory, paths, maxDepth, locateOptions);
+	}
+
+	// Breadth-first search
+	const queue = [{directory: startDirectory, depth: 0}];
+
+	while (queue.length > 0) {
+		const {directory, depth} = queue.shift();
+
+		// eslint-disable-next-line no-await-in-loop
+		const found = await locatePath(paths, {cwd: directory, ...locateOptions});
+		if (found) {
+			return path.resolve(directory, found);
+		}
+
+		if (depth >= maxDepth) {
+			continue;
+		}
+
+		try {
+			// eslint-disable-next-line no-await-in-loop
+			const entries = await fs.promises.readdir(directory, {withFileTypes: true});
+			for (const entry of entries) {
+				if (entry.isDirectory()) {
+					queue.push({directory: path.join(directory, entry.name), depth: depth + 1});
+				}
+			}
+		} catch {}
+	}
+
+	return undefined;
+}
+
+export function findDownSync(name, options = {}) {
+	const {startDirectory, maxDepth, paths, locateOptions, strategy} = prepareFindDownOptions(name, options);
+
+	if (strategy === 'depth') {
+		return findDownDepthFirstSync(startDirectory, paths, maxDepth, locateOptions);
+	}
+
+	// Breadth-first search
+	const queue = [{directory: startDirectory, depth: 0}];
+
+	while (queue.length > 0) {
+		const {directory, depth} = queue.shift();
+
+		const found = locatePathSync(paths, {cwd: directory, ...locateOptions});
+		if (found) {
+			return path.resolve(directory, found);
+		}
+
+		if (depth >= maxDepth) {
+			continue;
+		}
+
+		try {
+			const entries = fs.readdirSync(directory, {withFileTypes: true});
+			for (const entry of entries) {
+				if (entry.isDirectory()) {
+					queue.push({directory: path.join(directory, entry.name), depth: depth + 1});
+				}
+			}
+		} catch {}
+	}
+
+	return undefined;
+}
+

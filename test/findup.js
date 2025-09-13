@@ -2,75 +2,25 @@ import process from 'node:process';
 import {promisify} from 'node:util';
 import fs from 'node:fs';
 import path from 'node:path';
-import {fileURLToPath, pathToFileURL} from 'node:url';
 import test from 'ava';
 import isPathInside from 'is-path-inside';
-import {temporaryDirectory} from 'tempy';
 import {
 	findUp,
 	findUpSync,
 	findUpMultiple,
 	findUpMultipleSync,
 	findUpStop,
-} from './index.js';
+} from '../index.js';
+import {
+	name,
+	relative,
+	absolute,
+	url,
+	isWindows,
+	setupTemporaryDirectory,
+} from './helpers.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const name = {
-	packageDirectory: 'find-up',
-	packageJson: 'package.json',
-	fixtureDirectory: 'fixture',
-	fooDirectory: 'foo',
-	barDirectory: 'bar',
-	modulesDirectory: 'node_modules',
-	baz: 'baz.js',
-	qux: 'qux.js',
-	fileLink: 'file-link',
-	directoryLink: 'directory-link',
-	dotDirectory: '.git',
-};
-
-// These paths are relative to the project root
-const relative = {
-	fixtureDirectory: name.fixtureDirectory,
-	modulesDirectory: name.modulesDirectory,
-};
-relative.baz = path.join(relative.fixtureDirectory, name.baz);
-relative.qux = path.join(relative.fixtureDirectory, name.qux);
-relative.barDirQux = path.join(relative.fixtureDirectory, name.fooDirectory, name.barDirectory, name.qux);
-relative.barDir = path.join(relative.fixtureDirectory, name.fooDirectory, name.barDirectory);
-
-const absolute = {
-	packageDirectory: __dirname,
-};
-absolute.packageJson = path.join(absolute.packageDirectory, name.packageJson);
-absolute.fixtureDirectory = path.join(
-	absolute.packageDirectory,
-	name.fixtureDirectory,
-);
-absolute.baz = path.join(absolute.fixtureDirectory, name.baz);
-absolute.qux = path.join(absolute.fixtureDirectory, name.qux);
-absolute.fooDir = path.join(absolute.fixtureDirectory, name.fooDirectory);
-absolute.barDir = path.join(absolute.fixtureDirectory, name.fooDirectory, name.barDirectory);
-absolute.barDirQux = path.join(absolute.fixtureDirectory, name.fooDirectory, name.barDirectory, name.qux);
-absolute.fileLink = path.join(absolute.fixtureDirectory, name.fileLink);
-absolute.directoryLink = path.join(absolute.fixtureDirectory, name.directoryLink);
-absolute.dotDirectory = path.join(__dirname, name.dotDirectory);
-
-const url = {
-	fixtureDirectory: pathToFileURL(absolute.fixtureDirectory),
-};
-
-// Create a disjoint directory, used for the not-found tests
-test.beforeEach(t => {
-	t.context.disjoint = temporaryDirectory();
-});
-
-test.afterEach(t => {
-	fs.rmdirSync(t.context.disjoint);
-});
-
-const isWindows = process.platform === 'win32';
+setupTemporaryDirectory(test);
 
 test('async (child file)', async t => {
 	const foundPath = await findUp(name.packageJson);
@@ -647,4 +597,24 @@ test('sync multiple (not found, child file)', t => {
 	const filePaths = findUpMultipleSync('somenonexistentfile.js', {cwd: relative.barDir});
 
 	t.deepEqual(filePaths, []);
+});
+
+test('async multiple (with limit option)', async t => {
+	const filePaths = await findUpMultiple(name.qux, {cwd: relative.barDir, limit: 1});
+	t.deepEqual(filePaths, [absolute.barDirQux]);
+});
+
+test('sync multiple (with limit option)', t => {
+	const filePaths = findUpMultipleSync(name.qux, {cwd: relative.barDir, limit: 1});
+	t.deepEqual(filePaths, [absolute.barDirQux]);
+});
+
+test('async multiple (limit higher than results)', async t => {
+	const filePaths = await findUpMultiple(name.qux, {cwd: relative.barDir, limit: 10});
+	t.deepEqual(filePaths, [absolute.barDirQux, absolute.qux]);
+});
+
+test('sync multiple (limit higher than results)', t => {
+	const filePaths = findUpMultipleSync(name.qux, {cwd: relative.barDir, limit: 10});
+	t.deepEqual(filePaths, [absolute.barDirQux, absolute.qux]);
 });

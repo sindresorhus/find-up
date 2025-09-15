@@ -14,7 +14,23 @@ export type Options = {
 	Default: Root directory
 	*/
 	readonly stopAt?: string;
-} & LocatePathOptions;
+
+	/**
+	The type of path to match.
+
+	@default 'file'
+	*/
+	readonly type?: 'file' | 'directory' | 'both';
+
+	/**
+	The number of matches to limit the search to.
+
+	@default Infinity
+
+	Only available for `findUpMultiple` and `findUpMultipleSync`.
+	*/
+	readonly limit?: number;
+} & Omit<LocatePathOptions, 'type'>;
 
 /**
 Find a file or directory by walking up parent directories.
@@ -221,7 +237,7 @@ export function findUpMultipleSync(matcher: (directory: string) => Match, option
 export type FindDownOptions = {
 	readonly cwd?: URL | string;
 	readonly depth?: number;
-	readonly type?: 'file' | 'directory';
+	readonly type?: 'file' | 'directory' | 'both';
 	readonly allowSymlinks?: boolean;
 	readonly strategy?: 'breadth' | 'depth';
 };

@@ -1,6 +1,6 @@
 # find-up
 
-> Find a file or directory by walking up parent directories
+> Find a file or directory by walking up parent directories or down descendant directories
 
 ## Install
 
@@ -40,11 +40,16 @@ console.log(await findUp(async directory => {
 }, {type: 'directory'}));
 //=> '/Users/sindresorhus'
 
-// Combine findUp (as a matcher) with findDown to locate the first
-// ancestor that contains a matching descendant at a limited depth.
+// Find .git (could be a file or directory, common in submodules)
+console.log(await findUp('.git', {type: 'both'}));
+//=> '/Users/sindresorhus/.git'
+
+// Find the nearest parent directory that contains a specific file
+// in its direct children (useful for monorepo roots)
 console.log(await findUp(async directory => {
 	return findDown('example.js', {cwd: directory, depth: 1});
 }));
+//=> '/Users/sindresorhus/foo'
 ```
 
 ## API
@@ -63,9 +68,13 @@ Returns a `Promise` for either the first path found (by respecting the order of 
 
 Returns a `Promise` for either an array of all paths found or an empty array if none could be found.
 
+**Note:** You can limit the number of matches by setting the `limit` option.
+
 ### findUpMultiple([...name], options?)
 
 Returns a `Promise` for either an array of all paths found (by respecting the order of names) or an empty array if none could be found.
+
+**Note:** You can limit the number of matches by setting the `limit` option.
 
 ### findUpSync(name, options?)
 ### findUpSync(matcher, options?)
@@ -85,15 +94,21 @@ Returns an array of all paths found or an empty array if none could be found.
 
 Returns an array of all paths found (by respecting the order of names) or an empty array if none could be found.
 
+**Note:** You can limit the number of matches by setting the `limit` option.
+
 ### findDown(name, options?)
 ### findDown([...name], options?)
 
-Find a file or directory by walking down descendant directories from `cwd`. Returns a `Promise` for either the path or `undefined` if it could not be found.
+Find a file or directory by walking down descendant directories from `cwd`.
+
+Returns a `Promise` for either the path or `undefined` if it could not be found.
 
 ### findDownSync(name, options?)
 ### findDownSync([...name], options?)
 
 Synchronous version of `findDown`.
+
+Returns the path or `undefined` if it could not be found.
 
 #### name
 
@@ -122,7 +137,7 @@ The directory to start from.
 
 Type: `string`\
 Default: `'file'`\
-Values: `'file' | 'directory'`
+Values: `'file' | 'directory' | 'both'`
 
 The type of path to match.
 
@@ -135,10 +150,21 @@ Allow symbolic links to match if they point to the chosen path type.
 
 ##### stopAt
 
+*Only for `findUp` functions*
+
 Type: `URL | string`\
 Default: Root directory
 
 A directory path where the search halts if no matches are found before reaching this point.
+
+##### limit
+
+*Only for `findUpMultiple` and `findUpMultipleSync`*
+
+Type: `number`\
+Default: `Infinity`
+
+The maximum number of matches to return. Useful for limiting results when searching for multiple files.
 
 ### findUpStop
 
@@ -181,7 +207,7 @@ Maximum number of directory levels to traverse below `cwd`.
 
 Type: `string`\
 Default: `'file'`\
-Values: `'file' | 'directory'`
+Values: `'file' | 'directory' | 'both'`
 
 The type of path to match.
 

@@ -618,3 +618,19 @@ test('sync multiple (limit higher than results)', t => {
 	const filePaths = findUpMultipleSync(name.qux, {cwd: relative.barDir, limit: 10});
 	t.deepEqual(filePaths, [absolute.barDirQux, absolute.qux]);
 });
+
+test('async (type: both - file)', async t => {
+	t.is(await findUp(name.qux, {cwd: relative.barDir, type: 'both'}), absolute.barDirQux);
+});
+
+test('sync (type: both - file)', t => {
+	t.is(findUpSync(name.qux, {cwd: relative.barDir, type: 'both'}), absolute.barDirQux);
+});
+
+test('async (type: both - directory)', async t => {
+	t.is(await findUp(name.fooDirectory, {cwd: relative.barDir, type: 'both'}), absolute.fooDir);
+});
+
+test('sync (type: both - directory)', t => {
+	t.is(findUpSync(name.fooDirectory, {cwd: relative.barDir, type: 'both'}), absolute.fooDir);
+});

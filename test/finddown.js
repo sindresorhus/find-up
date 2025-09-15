@@ -167,3 +167,23 @@ test('findDown sync (depth-first vs breadth-first ordering)', t => {
 	t.true(breadthResult.includes('very-deep/deepest.txt'));
 	t.true(depthResult.includes('very-deep/deepest.txt'));
 });
+
+test('findDown async (type: both - file)', async t => {
+	const p = await findDown(name.qux, {cwd: absolute.fixtureDirectory, depth: 2, type: 'both'});
+	t.is(p, absolute.qux);
+});
+
+test('findDown sync (type: both - file)', t => {
+	const p = findDownSync(name.qux, {cwd: absolute.fixtureDirectory, depth: 2, type: 'both'});
+	t.is(p, absolute.qux);
+});
+
+test('findDown async (type: both - directory)', async t => {
+	const p = await findDown(name.barDirectory, {cwd: absolute.fooDir, depth: 1, type: 'both'});
+	t.is(p, absolute.barDir);
+});
+
+test('findDown sync (type: both - directory)', t => {
+	const p = findDownSync(name.barDirectory, {cwd: absolute.fooDir, depth: 1, type: 'both'});
+	t.is(p, absolute.barDir);
+});

@@ -1,6 +1,6 @@
 {
 	"name": "find-up",
-	"version": "7.0.0",
+	"version": "8.0.0",
 	"description": "Find a file or directory by walking up parent directories",
 	"license": "MIT",
 	"repository": "sindresorhus/find-up",
@@ -63,7 +63,10 @@
 		],
 		"rules": {
 			"ava/no-import-test-files": "off",
-			"max-params": ["warn", 5],
+			"max-params": [
+				"warn",
+				5
+			],
 			"unicorn/no-empty-file": "off"
 		}
 	}

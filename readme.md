@@ -43,13 +43,6 @@ console.log(await findUp(async directory => {
 // Find .git (could be a file or directory, common in submodules)
 console.log(await findUp('.git', {type: 'both'}));
 //=> '/Users/sindresorhus/.git'
-
-// Find the nearest parent directory that contains a specific file
-// in its direct children (useful for monorepo roots)
-console.log(await findUp(async directory => {
-	return findDown('example.js', {cwd: directory, depth: 1});
-}));
-//=> '/Users/sindresorhus/foo'
 ```
 
 ## API
@@ -102,6 +95,17 @@ Returns an array of all paths found (by respecting the order of names) or an emp
 Find a file or directory by walking down descendant directories from `cwd`.
 
 Returns a `Promise` for either the path or `undefined` if it could not be found.
+
+```js
+import {findUp, findDown} from 'find-up';
+
+// Find the nearest parent directory that contains a specific file
+// in its direct children (useful for monorepo roots)
+console.log(await findUp(async directory => {
+	return findDown('example.js', {cwd: directory, depth: 1});
+}));
+//=> '/Users/sindresorhus/foo'
+```
 
 ### findDownSync(name, options?)
 ### findDownSync([...name], options?)
@@ -225,8 +229,8 @@ Default: `'breadth'`\
 Values: `'breadth' | 'depth'`
 
 Search strategy to use:
-- `'breadth'`: Breadth-first search, finds shallower matches first
-- `'depth'`: Depth-first search, fully explores each branch before moving to the next
+- `'breadth'`: Breadth-first search, finds shallower matches first.
+- `'depth'`: Depth-first search, fully explores each branch before moving to the next.
 
 ## Related
 

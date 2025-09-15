@@ -3,45 +3,6 @@ import fs from 'node:fs';
 import {locatePath, locatePathSync} from 'locate-path';
 import {toPath} from 'unicorn-magic';
 
-async function locatePathWithBothType(paths, options) {
-	if (options.type !== 'both') {
-		return locatePath(paths, options);
-	}
-
-	// For type: 'both', check if path exists as either file or directory
-	const {type: _, cwd = '', ...locateOptions} = options;
-	const statFunction = locateOptions.allowSymlinks === false ? fs.promises.lstat : fs.promises.stat;
-
-	for (const pathItem of paths) {
-		try {
-			const fullPath = path.resolve(cwd, pathItem);
-			// eslint-disable-next-line no-await-in-loop
-			const stat = await statFunction(fullPath);
-			if (stat.isFile() || stat.isDirectory()) {
-				return pathItem;
-			}
-		} catch {}
-	}
-}
-
-function locatePathSyncWithBothType(paths, options) {
-	if (options.type !== 'both') {
-		return locatePathSync(paths, options);
-	}
-
-	// For type: 'both', check if path exists as either file or directory
-	const {type: _, cwd = '', ...locateOptions} = options;
-	const statFunction = locateOptions.allowSymlinks === false ? fs.lstatSync : fs.statSync;
-
-	for (const pathItem of paths) {
-		const fullPath = path.resolve(cwd, pathItem);
-		const stat = statFunction(fullPath, {throwIfNoEntry: false});
-		if (stat?.isFile() || stat?.isDirectory()) {
-			return pathItem;
-		}
-	}
-}
-
 export const findUpStop = Symbol('findUpStop');
 
 export async function findUpMultiple(name, options = {}) {
@@ -53,7 +14,7 @@ export async function findUpMultiple(name, options = {}) {
 
 	const runMatcher = async locateOptions => {
 		if (typeof name !== 'function') {
-			return locatePathWithBothType(paths, locateOptions);
+			return locatePath(paths, locateOptions);
 		}
 
 		const foundPath = await name(locateOptions.cwd);
@@ -65,7 +26,6 @@ export async function findUpMultiple(name, options = {}) {
 	};
 
 	const matches = [];
-	// eslint-disable-next-line no-constant-condition
 	while (true) {
 		// eslint-disable-next-line no-await-in-loop
 		const foundPath = await runMatcher({...options, cwd: directory});
@@ -97,7 +57,7 @@ export function findUpMultipleSync(name, options = {}) {
 
 	const runMatcher = locateOptions => {
 		if (typeof name !== 'function') {
-			return locatePathSyncWithBothType(paths, locateOptions);
+			return locatePathSync(paths, locateOptions);
 		}
 
 		const foundPath = name(locateOptions.cwd);
@@ -109,7 +69,6 @@ export function findUpMultipleSync(name, options = {}) {
 	};
 
 	const matches = [];
-	// eslint-disable-next-line no-constant-condition
 	while (true) {
 		const foundPath = runMatcher({...options, cwd: directory});
 
@@ -142,7 +101,7 @@ export function findUpSync(name, options = {}) {
 }
 
 async function findDownDepthFirst(directory, paths, maxDepth, locateOptions, currentDepth = 0) {
-	const found = await locatePathWithBothType(paths, {cwd: directory, ...locateOptions});
+	const found = await locatePath(paths, {cwd: directory, ...locateOptions});
 	if (found) {
 		return path.resolve(directory, found);
 	}
@@ -174,7 +133,7 @@ async function findDownDepthFirst(directory, paths, maxDepth, locateOptions, cur
 }
 
 function findDownDepthFirstSync(directory, paths, maxDepth, locateOptions, currentDepth = 0) {
-	const found = locatePathSyncWithBothType(paths, {cwd: directory, ...locateOptions});
+	const found = locatePathSync(paths, {cwd: directory, ...locateOptions});
 	if (found) {
 		return path.resolve(directory, found);
 	}
@@ -210,7 +169,13 @@ function prepareFindDownOptions(name, options) {
 	const paths = [name].flat();
 	const {type = 'file', allowSymlinks = true, strategy = 'breadth'} = options;
 	const locateOptions = {type, allowSymlinks};
-	return {startDirectory, maxDepth, paths, locateOptions, strategy};
+	return {
+		startDirectory,
+		maxDepth,
+		paths,
+		locateOptions,
+		strategy,
+	};
 }
 
 async function findDownBreadthFirst(startDirectory, paths, maxDepth, locateOptions) {
@@ -220,7 +185,7 @@ async function findDownBreadthFirst(startDirectory, paths, maxDepth, locateOptio
 		const {directory, depth} = queue.shift();
 
 		// eslint-disable-next-line no-await-in-loop
-		const found = await locatePathWithBothType(paths, {cwd: directory, ...locateOptions});
+		const found = await locatePath(paths, {cwd: directory, ...locateOptions});
 		if (found) {
 			return path.resolve(directory, found);
 		}
@@ -249,7 +214,7 @@ function findDownBreadthFirstSync(startDirectory, paths, maxDepth, locateOptions
 	while (queue.length > 0) {
 		const {directory, depth} = queue.shift();
 
-		const found = locatePathSyncWithBothType(paths, {cwd: directory, ...locateOptions});
+		const found = locatePathSync(paths, {cwd: directory, ...locateOptions});
 		if (found) {
 			return path.resolve(directory, found);
 		}

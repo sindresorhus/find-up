@@ -234,11 +234,45 @@ console.log(findUpMultipleSync(directory => {
 */
 export function findUpMultipleSync(matcher: (directory: string) => Match, options?: Options): string[];
 
+/**
+Options for `findDown` and `findDownSync`.
+*/
 export type FindDownOptions = {
+	/**
+	The directory to start from.
+
+	@default process.cwd()
+	*/
 	readonly cwd?: URL | string;
+
+	/**
+	Maximum number of directory levels to traverse below `cwd`.
+
+	@default 1
+	*/
 	readonly depth?: number;
+
+	/**
+	The type of path to match.
+
+	@default 'file'
+	*/
 	readonly type?: 'file' | 'directory' | 'both';
+
+	/**
+	Allow symbolic links to match if they point to the chosen path type.
+
+	@default true
+	*/
 	readonly allowSymlinks?: boolean;
+
+	/**
+	Search strategy to use:
+	- `'breadth'`: Breadth-first search, finds shallower matches first.
+	- `'depth'`: Depth-first search, fully explores each branch before moving to the next.
+
+	@default 'breadth'
+	*/
 	readonly strategy?: 'breadth' | 'depth';
 };
 
@@ -247,6 +281,18 @@ Find a file or directory by walking down descendant directories from `cwd`.
 
 @param name - The name of the file or directory to find. Can be an array of names to search for multiple files.
 @returns The path or `undefined` if it could not be found.
+
+@example
+```
+import {findUp, findDown} from 'find-up';
+
+// Find the nearest parent directory that contains a specific file
+// in its direct children (useful for monorepo roots)
+console.log(await findUp(async directory => {
+	return findDown('example.js', {cwd: directory, depth: 1});
+}));
+//=> '/Users/sindresorhus/foo'
+```
 */
 export function findDown(name: string | readonly string[], options?: FindDownOptions): Promise<string | undefined>;
 
@@ -255,5 +301,18 @@ Synchronously find a file or directory by walking down descendant directories fr
 
 @param name - The name of the file or directory to find. Can be an array of names to search for multiple files.
 @returns The path or `undefined` if it could not be found.
+
+@example
+```
+import {findUpSync, findDownSync} from 'find-up';
+
+// Find the nearest parent directory that contains a specific file
+// in its direct children (useful for monorepo roots)
+console.log(findUpSync(async directory => {
+	return findDownSync('example.js', {cwd: directory, depth: 1});
+}));
+//=> '/Users/sindresorhus/foo'
+```
+
 */
 export function findDownSync(name: string | readonly string[], options?: FindDownOptions): string | undefined;
